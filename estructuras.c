@@ -2,7 +2,9 @@
 #include <string.h>
 #include "estructuras.h"
 
-
+/* Crea un string con la cadena
+	Entrada: la cadena
+	Salida: el string creado */
 struct string* crear_string(char* cadena) {
     struct string* string =
     calloc(1, sizeof(struct string));
@@ -10,10 +12,14 @@ struct string* crear_string(char* cadena) {
     return string;
 }
 
+/* Libera un string y su cadena
+	Entrada: el string
+	Salida: la memoria del string queda libre. La cadena tiene que haber salido de malloc */
 void liberar_string(struct string* string) {
     free(string->cadena);
     free(string);
 }
+
 
 
 /* Crea un recurso con nombre, cantidad, maximo y relevancia
@@ -81,6 +87,8 @@ struct comuna* crear_comuna(char* nombre) {
     comuna->nombre = nombre;
     comuna->bienes = crear_lista_recursos();
     comuna->servicios = crear_lista_recursos();
+    comuna->satisfaccion = 0;
+    comuna->necesidad = 0;
     return comuna;
 }
 

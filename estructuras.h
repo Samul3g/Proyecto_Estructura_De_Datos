@@ -27,6 +27,8 @@ struct comuna {
     char* nombre;
     struct lista_recursos* bienes;
     struct lista_recursos* servicios;
+	int satisfaccion;
+	int necesidad;
 };
 
 struct nodo_lista_comunas {
