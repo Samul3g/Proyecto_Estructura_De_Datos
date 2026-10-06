@@ -7,7 +7,7 @@
 	* Entradas: servicio, cantidad, comuna
 	* salidas: 0 (false/error), 1 (true/exito) 
 */
-int reduccion_servicio(char* servicio, int cantidad, char* nombre_comuna){
+int reduccion_servicio(char* servicio, int cantidad, struct comuna* comuna){
 		
 		
 		// validaciones
@@ -18,14 +18,7 @@ int reduccion_servicio(char* servicio, int cantidad, char* nombre_comuna){
 		}
 		
 		
-		struct nodo_lista_comunas* nodo = buscar_comuna(lista_comunas, nombre_comuna);
-		//valida que la comuna sea valida
-		if(nodo == NULL){
-				return 0;
-		}
-		
-		
-		struct lista_recursos* lista_recursos = nodo->comuna->servicios;
+		struct lista_recursos* lista_recursos = comuna->servicios;
 		struct nodo_recurso* recurso = buscar_recurso(lista_recursos, servicio);
 		if(recurso == NULL){ // valida que exista el servicio
 		return 0;		
@@ -48,7 +41,7 @@ int reduccion_servicio(char* servicio, int cantidad, char* nombre_comuna){
 	* Entradas: bien, cantidad, comuna
 	* salidas: 0 (false/error), 1 (true/exito) 
 */
-int reduccion_bien(char* bien, int cantidad, char* nombre_comuna){
+int reduccion_bien(char* bien, int cantidad, struct comuna* comuna){
 		
 		
 		// validaciones
@@ -59,14 +52,7 @@ int reduccion_bien(char* bien, int cantidad, char* nombre_comuna){
 		}
 		
 			
-		struct nodo_lista_comunas* nodo = buscar_comuna(lista_comunas, nombre_comuna);
-		//valida que la comuna sea valida
-		if(nodo == NULL){
-				return 0;
-		}
-		
-		
-		struct lista_recursos* lista_recursos = nodo->comuna->bienes;
+		struct lista_recursos* lista_recursos = comuna->bienes;
 		struct nodo_recurso* recurso = buscar_recurso(lista_recursos, bien);
 		if(recurso == NULL){ // valida que exista el bien
 		return 0;		
@@ -89,7 +75,7 @@ int reduccion_bien(char* bien, int cantidad, char* nombre_comuna){
 	* Entradas: servicio, cantidad, comuna
 	* salidas: 0 (false/error), 1 (true/exito) 
 */
-int aumento_servicio(char* servicio, int cantidad, char* nombre_comuna){
+int aumento_servicio(char* servicio, int cantidad, struct comuna* comuna){
 		
 		
 		// validaciones
@@ -99,14 +85,7 @@ int aumento_servicio(char* servicio, int cantidad, char* nombre_comuna){
 		return 0;	
 		}
 		
-		struct nodo_lista_comunas* nodo = buscar_comuna(lista_comunas, nombre_comuna);
-		//valida que la comuna sea valida
-		if(nodo == NULL){
-				return 0;
-		}
-		
-		
-		struct lista_recursos* lista_recursos = nodo->comuna->servicios;
+		struct lista_recursos* lista_recursos = comuna->servicios;
 		struct nodo_recurso* recurso = buscar_recurso(lista_recursos, servicio);
 		if(recurso == NULL){ // valida que exista el servicio
 		return 0;		
@@ -132,7 +111,7 @@ int aumento_servicio(char* servicio, int cantidad, char* nombre_comuna){
 	* Entradas: bien, cantidad, comuna
 	* salidas: 0 (false/error), 1 (true/exito) 
 */
-int aumento_bien(char* bien, int cantidad, char* nombre_comuna){
+int aumento_bien(char* bien, int cantidad, struct comuna* comuna){
 		
 		
 		// validaciones
@@ -143,14 +122,8 @@ int aumento_bien(char* bien, int cantidad, char* nombre_comuna){
 		}
 		
 		
-		struct nodo_lista_comunas* nodo = buscar_comuna(lista_comunas, nombre_comuna);
-		//valida que la comuna sea valida
-		if(nodo == NULL){
-				return 0;
-		}
+		struct lista_recursos* lista_recursos = comuna->bienes;
 		
-		
-		struct lista_recursos* lista_recursos = nodo->comuna->bienes;
 		struct nodo_recurso* recurso = buscar_recurso(lista_recursos, bien);
 		if(recurso == NULL){ // valida que exista el bien
 		return 0;		

@@ -2,19 +2,35 @@
 #include <string.h>
 #include "estructuras.h"
 
-/* Crea un recurso con nombre, cantidad, maximo y relevancia
-	Entrada: nombre, cantidad, maximo y relevancia
-	Salida: el nodo del recurso creado */
-struct nodo_recurso* crear_nodo_recurso(char* nombre, int cantidad, int maximo, int relevancia) {
 
+struct string* crear_string(char* cadena) {
+    struct string* string =
+    calloc(1, sizeof(struct string));
+    string->cadena = cadena;
+    return string;
+}
+
+void liberar_string(struct string* string) {
+    free(string->cadena);
+    free(string);
+}
+
+
+/* Crea un recurso con nombre, cantidad, maximo y relevancia
+	Entrada: nombre, necesidad, maximo, relevancia, cantidad
+	Salida: el nodo del recurso creado */
+struct nodo_recurso* crear_nodo_recurso(char* nombre, bool necesidad,  int maximo, int relevancia, int cantidad) {
     struct nodo_recurso* recurso =
     calloc(1, sizeof(struct nodo_recurso));
     recurso->nombre = nombre;
-    recurso->cantidad = cantidad;
+    recurso->necesidad = necesidad;
     recurso->maximo = maximo;
     recurso->relevancia = relevancia;
+    recurso->cantidad = cantidad;
     return recurso;
 }
+
+
 
 /* Arma el nodo de la lista doble a partir de un recurso
 	Entrada: el recurso que va dentro del nodo
@@ -251,4 +267,40 @@ void liberar_lista_comunas(struct lista_comunas* lista_comunas) {
 void liberar_estructura(struct lista_recursos* lista_recursos, struct lista_comunas* lista_comunas) {
     liberar_lista_recursos(lista_recursos);
     liberar_lista_comunas(lista_comunas);
+}
+
+/* Da una vuelta al circulo y devuelve el largo
+	Entrada: la lista circular
+	Salida: el largo de la lista */
+int largo_comuna(struct lista_comunas* lista) {
+    struct nodo_lista_comunas* nodo = lista->inicio;
+    if (nodo == NULL) {
+        return 0;
+    }
+
+    int largo = 1;
+    nodo = nodo->siguiente;
+    while (nodo != lista->inicio) {
+        largo++;
+        nodo = nodo->siguiente;
+    }
+    return largo;
+}
+
+/* Da una vuelta a la lista doble y devuelve el largo
+	Entrada: la lista doble
+	Salida: el largo de la lista */
+int largo_recurso(struct lista_recursos* lista) {
+    struct nodo_lista_recursos* nodo = lista->inicio;
+    if (nodo == NULL) {
+        return 0;
+    }
+
+    int largo = 1;
+    nodo = nodo->siguiente;
+    while (nodo != NULL) {
+        largo++;
+        nodo = nodo->siguiente;
+    }
+    return largo;
 }

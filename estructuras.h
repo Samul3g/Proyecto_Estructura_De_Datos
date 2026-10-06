@@ -1,11 +1,16 @@
 #ifndef ESTRUCTURAS_H
 #define ESTRUCTURAS_H
 
+struct string {
+    char* cadena;
+};
+
 struct nodo_recurso {
     char* nombre;
+    bool necesidad;
     int maximo;
-    int cantidad;
     int relevancia;
+    int cantidad;
 };
 
 struct nodo_lista_recursos {
@@ -34,9 +39,19 @@ struct lista_comunas {
     struct nodo_lista_comunas* inicio;
 };
 
-struct nodo_recurso* crear_nodo_recurso(char* nombre, int cantidad, int maximo, int relevancia);
-	/* Crea un recurso con nombre, cantidad, maximo y relevancia
-		Entrada: nombre, cantidad, maximo y relevancia
+struct string* crear_string(char* cadena);
+	/* Crea un string con la cadena
+		Entrada: la cadena
+		Salida: el string creado */
+
+void liberar_string(struct string* string);
+	/* Libera un string y su cadena
+		Entrada: el string
+		Salida: la memoria del string queda libre. La cadena tiene que haber salido de malloc */
+
+struct nodo_recurso* crear_nodo_recurso(char* nombre, bool necesidad, int maximo, int relevancia, int cantidad);
+	/* Crea un recurso con nombre, necesidad, maximo, relevancia y cantidad
+		Entrada: nombre, necesidad, maximo, relevancia y cantidad
 		Salida: el nodo del recurso creado */
 
 struct nodo_lista_recursos* crear_nodo_lista_recursos(struct nodo_recurso* recurso);
@@ -118,5 +133,15 @@ void liberar_estructura(struct lista_recursos* lista_recursos, struct lista_comu
 	/* Libera una lista de recursos suelta y la lista de comunas
 		Entrada: la lista de recursos y la lista de comunas
 		Salida: ambas quedan liberadas. No pases una lista que ya viva dentro de una comuna */
+
+int largo_comuna(struct lista_comunas* lista);
+	/* Da una vuelta al circulo y devuelve el largo
+		Entrada: la lista circular
+		Salida: el largo de la lista */
+
+int largo_recurso(struct lista_recursos* lista);
+	/* Da una vuelta a la lista doble y devuelve el largo
+		Entrada: la lista doble
+		Salida: el largo de la lista */
 
 #endif
