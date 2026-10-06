@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "estructuras.h"
@@ -12,16 +13,10 @@ struct char_array* crear_char_array(char caracter) {
     return char_array;
 }
 
-/* Libera un char_array y su cadena
+/* Libera un nodo de la cadena
 	Entrada: el char_array
-	Salida: la memoria del char_array queda libre. La cadena tiene que haber salido de malloc */
+	Salida: la memoria de ese nodo queda libre */
 void liberar_char_array(struct char_array* char_array) {
-    struct char_array* actual = char_array->inicio;
-    while (actual != NULL) {
-        struct char_array* siguiente = actual->siguiente;
-        liberar_char_array(actual);
-        actual = siguiente;
-    }
     free(char_array);
 }
 
@@ -113,10 +108,26 @@ struct lista_comunas* crear_lista_comunas() {
     return lista_comunas;
 }
 
+void imprimit_lista_comunas(struct lista_comunas* lista_comunas) {
+    struct nodo_lista_comunas* nodo = lista_comunas->inicio;
+    if (nodo == NULL) {
+        return;
+    }
+    do {
+        struct char_array* actual = nodo->comuna->nombre->inicio;
+        while (actual != NULL) {
+            putchar(actual->caracter);
+            actual = actual->siguiente;
+        }
+        putchar('\n');
+        nodo = nodo->siguiente;
+    } while (nodo != lista_comunas->inicio);
+}
+
 /* Crea una comuna con sus dos listas de inventario vacias
 	Entrada: el nombre de la comuna
 	Salida: la comuna, con bienes y servicios listos para usar */
-struct comuna* crear_comuna(char* nombre) {
+struct comuna* crear_comuna(struct string* nombre) {
     struct comuna* comuna =
     calloc(1, sizeof(struct comuna));
     comuna->nombre = nombre;
@@ -174,6 +185,24 @@ void agregar_comuna(struct lista_comunas* lista_comunas, struct comuna* comuna) 
     }
 }
 
+/* Compara el nombre enlazado de una comuna con una cadena de C */
+static int mismo_nombre(struct string* nombre, char* cadena) {
+    struct char_array* actual = NULL;
+    int i = 0;
+    if (nombre == NULL || cadena == NULL) {
+        return nombre == NULL && cadena == NULL;
+    }
+    actual = nombre->inicio;
+    while (actual != NULL && cadena[i] != '\0') {
+        if (actual->caracter != cadena[i]) {
+            return 0;
+        }
+        actual = actual->siguiente;
+        i++;
+    }
+    return actual == NULL && cadena[i] == '\0';
+}
+
 /* Da una vuelta al circulo buscando una comuna por nombre
 	Entrada: la lista circular y el nombre
 	Salida: el nodo de la comuna si esta, NULL si la lista esta vacia o no aparece */
@@ -183,13 +212,13 @@ struct nodo_lista_comunas* buscar_comuna(struct lista_comunas* lista_comunas, ch
         return NULL;
     }
 
-    if (strcmp(nodo->comuna->nombre, nombre) == 0) {
+    if (mismo_nombre(nodo->comuna->nombre, nombre)) {
         return nodo;
     }
     nodo = nodo->siguiente;
 
     while (nodo != lista_comunas->inicio) {
-        if (strcmp(nodo->comuna->nombre, nombre) == 0) {
+        if (mismo_nombre(nodo->comuna->nombre, nombre)) {
             return nodo;
         }
         nodo = nodo->siguiente;
@@ -229,7 +258,7 @@ void eliminar_comuna(struct lista_comunas* lista_comunas, char* nombre) {
         return;
     }
 
-    if (strcmp(nodo->comuna->nombre, nombre) == 0) {
+    if (mismo_nombre(nodo->comuna->nombre, nombre)) {
         if (nodo->siguiente == nodo) {
             lista_comunas->inicio = NULL;
         } else {
@@ -244,7 +273,7 @@ void eliminar_comuna(struct lista_comunas* lista_comunas, char* nombre) {
     nodo = nodo->siguiente;
 
     while (nodo != lista_comunas->inicio) {
-        if (strcmp(nodo->comuna->nombre, nombre) == 0) {
+        if (mismo_nombre(nodo->comuna->nombre, nombre)) {
             nodo->anterior->siguiente = nodo->siguiente;
             nodo->siguiente->anterior = nodo->anterior;
             liberar_comuna(nodo->comuna);
@@ -283,7 +312,7 @@ void liberar_lista_recursos(struct lista_recursos* lista_recursos) {
 void liberar_comuna(struct comuna* comuna) {
     liberar_lista_recursos(comuna->bienes);
     liberar_lista_recursos(comuna->servicios);
-    free(comuna->nombre);
+    liberar_string(comuna->nombre);
     free(comuna);
 }   
 

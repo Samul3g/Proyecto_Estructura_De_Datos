@@ -28,7 +28,7 @@ struct lista_recursos {
 };
 
 struct comuna {
-    char* nombre;
+    struct string* nombre;
     struct lista_recursos* bienes;
     struct lista_recursos* servicios;
 	int satisfaccion;
@@ -81,7 +81,7 @@ struct lista_recursos* crear_lista_recursos();
 		Entrada: ninguna
 		Salida: la lista, con inicio en NULL */
 
-struct comuna* crear_comuna(char* nombre);
+struct comuna* crear_comuna(struct string* nombre);
 	/* Crea una comuna con sus dos listas de inventario vacias
 		Entrada: el nombre de la comuna
 		Salida: la comuna, con bienes y servicios listos para usar */
@@ -96,6 +96,11 @@ struct lista_comunas* crear_lista_comunas();
 		Entrada: ninguna
 		Salida: la lista, con inicio en NULL */
 
+void imprimit_lista_comunas(struct lista_comunas* lista_comunas);
+	/* Imprime la lista circular de comunas
+		Entrada: la lista circular
+		Salida: la lista circular impresa */
+		
 struct nodo_recurso* buscar_recurso(struct lista_recursos* lista_recursos, char* nombre);
 	/* Recorre la lista doble hasta encontrar un recurso por nombre
 		Entrada: la lista y el nombre a buscar
