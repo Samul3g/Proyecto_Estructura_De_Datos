@@ -2,13 +2,43 @@
 #include <string.h>
 #include "estructuras.h"
 
+/* Crea un char_array con el caracter
+	Entrada: el caracter
+	Salida: el char_array creado */
+struct char_array* crear_char_array(char caracter) {
+    struct char_array* char_array =
+    calloc(1, sizeof(struct char_array));
+    char_array->caracter = caracter;
+    return char_array;
+}
+
+/* Libera un char_array y su cadena
+	Entrada: el char_array
+	Salida: la memoria del char_array queda libre. La cadena tiene que haber salido de malloc */
+void liberar_char_array(struct char_array* char_array) {
+    struct char_array* actual = char_array->inicio;
+    while (actual != NULL) {
+        struct char_array* siguiente = actual->siguiente;
+        liberar_char_array(actual);
+        actual = siguiente;
+    }
+    free(char_array);
+}
+
 /* Crea un string con la cadena
 	Entrada: la cadena
 	Salida: el string creado */
 struct string* crear_string(char* cadena) {
-    struct string* string =
-    calloc(1, sizeof(struct string));
-    string->cadena = cadena;
+    struct string* string = calloc(1, sizeof(struct string));
+    if (cadena == NULL || cadena[0] == '\0') {
+        return string;
+    }
+    string->inicio = crear_char_array(cadena[0]);
+    struct char_array* actual = string->inicio;
+    for (int i = 1; cadena[i] != '\0'; i++) {
+        actual->siguiente = crear_char_array(cadena[i]);
+        actual = actual->siguiente;
+    }
     return string;
 }
 
@@ -16,7 +46,12 @@ struct string* crear_string(char* cadena) {
 	Entrada: el string
 	Salida: la memoria del string queda libre. La cadena tiene que haber salido de malloc */
 void liberar_string(struct string* string) {
-    free(string->cadena);
+    struct char_array* actual = string->inicio;
+    while (actual != NULL) {
+        struct char_array* siguiente = actual->siguiente;
+        liberar_char_array(actual);
+        actual = siguiente;
+    }
     free(string);
 }
 

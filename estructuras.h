@@ -2,9 +2,13 @@
 #define ESTRUCTURAS_H
 
 struct string {
-    char* cadena;
+	struct char_array* inicio;
 };
 
+struct char_array {
+	char caracter;
+	struct char_array* siguiente;
+};
 struct nodo_recurso {
     char* nombre;
     bool necesidad;
@@ -51,11 +55,22 @@ void liberar_string(struct string* string);
 		Entrada: el string
 		Salida: la memoria del string queda libre. La cadena tiene que haber salido de malloc */
 
+struct char_array* crear_char_array(char caracter);
+	/* Crea un char_array con el caracter
+		Entrada: el caracter
+		Salida: el char_array creado */
+
+void liberar_char_array(struct char_array* char_array);
+	/* Libera un char_array y su cadena
+		Entrada: el char_array
+		Salida: la memoria del char_array queda libre. La cadena tiene que haber salido de malloc */
+		
 struct nodo_recurso* crear_nodo_recurso(char* nombre, bool necesidad, int maximo, int relevancia, int cantidad);
 	/* Crea un recurso con nombre, necesidad, maximo, relevancia y cantidad
 		Entrada: nombre, necesidad, maximo, relevancia y cantidad
 		Salida: el nodo del recurso creado */
 
+		
 struct nodo_lista_recursos* crear_nodo_lista_recursos(struct nodo_recurso* recurso);
 	/* Arma el nodo de la lista doble a partir de un recurso
 		Entrada: el recurso que va dentro del nodo
