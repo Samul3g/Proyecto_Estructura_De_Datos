@@ -1,6 +1,59 @@
 #ifndef ESTRUCTURAS_H
 #define ESTRUCTURAS_H
 
+#include <stdbool.h>
+
+struct entrada_lista_archivo {
+	struct string* nombre;
+	int indice;
+	struct entrada_lista_archivo* siguiente;
+};
+
+struct lista_archivo {
+	struct entrada_lista_archivo* inicio;
+	struct entrada_lista_archivo* ultimo;
+};
+
+struct lista_archivo* crear_lista_archivo();
+	/* Crea una lista de archivo
+		Entrada: ninguna
+		Salida: la lista creada */
+
+void liberar_lista_archivo(struct lista_archivo* lista);
+	/* Libera una lista de archivo
+		Entrada: la lista
+		Salida: la lista queda liberada */
+
+struct entrada_lista_archivo* crear_entrada_lista_archivo(struct string* nombre, int indice);
+	/* Crea una entrada de lista de archivo
+		Entrada: el nombre y el indice
+		Salida: la entrada creada */
+
+void liberar_entrada_lista_archivo(struct entrada_lista_archivo* entrada);
+	/* Libera una entrada de lista de archivo
+		Entrada: la entrada
+		Salida: la entrada queda liberada */
+
+struct entrada_lista_archivo* buscar_entrada_lista_archivo(struct lista_archivo* lista, int indice);
+	/* Busca una entrada de lista de archivo por indice
+		Entrada: la lista y el indice
+		Salida: la entrada si existe, NULL si no */
+
+void agregar_entrada_lista_archivo(struct lista_archivo* lista, struct entrada_lista_archivo* entrada);
+	/* Agrega una entrada de lista de archivo a la lista
+		Entrada: la lista y la entrada
+		Salida: la entrada queda agregada a la lista */
+
+void eliminar_entrada_lista_archivo(struct lista_archivo* lista, struct string* nombre);
+	/* Elimina una entrada de lista de archivo por nombre
+		Entrada: la lista y el nombre
+		Salida: la entrada queda eliminada de la lista */
+
+void barajar_lista_archivo(struct lista_archivo* lista);
+	/* Baraja la lista de archivo
+		Entrada: la lista
+		Salida: la lista barajada */
+
 struct string {
 	struct char_array* inicio;
 };
@@ -10,7 +63,7 @@ struct char_array {
 	struct char_array* siguiente;
 };
 struct nodo_recurso {
-    char* nombre;
+    struct string* nombre;
     bool necesidad;
     int maximo;
     int relevancia;
@@ -65,7 +118,7 @@ void liberar_char_array(struct char_array* char_array);
 		Entrada: el char_array
 		Salida: la memoria del char_array queda libre. La cadena tiene que haber salido de malloc */
 		
-struct nodo_recurso* crear_nodo_recurso(char* nombre, bool necesidad, int maximo, int relevancia, int cantidad);
+struct nodo_recurso* crear_nodo_recurso(struct string* nombre, bool necesidad, int maximo, int relevancia, int cantidad);
 	/* Crea un recurso con nombre, necesidad, maximo, relevancia y cantidad
 		Entrada: nombre, necesidad, maximo, relevancia y cantidad
 		Salida: el nodo del recurso creado */
@@ -100,13 +153,13 @@ void imprimit_lista_comunas(struct lista_comunas* lista_comunas);
 	/* Imprime la lista circular de comunas
 		Entrada: la lista circular
 		Salida: la lista circular impresa */
-		
-struct nodo_recurso* buscar_recurso(struct lista_recursos* lista_recursos, char* nombre);
+
+struct nodo_recurso* buscar_recurso(struct lista_recursos* lista_recursos, struct string* nombre);
 	/* Recorre la lista doble hasta encontrar un recurso por nombre
 		Entrada: la lista y el nombre a buscar
 		Salida: el recurso si esta, NULL si no */
 
-struct nodo_lista_comunas* buscar_comuna(struct lista_comunas* lista_comunas, char* nombre);
+struct nodo_lista_comunas* buscar_comuna(struct lista_comunas* lista_comunas, struct string* nombre);
 	/* Da una vuelta al circulo buscando una comuna por nombre
 		Entrada: la lista circular y el nombre
 		Salida: el nodo de la comuna si esta, NULL si la lista esta vacia o no aparece */
@@ -121,12 +174,12 @@ void agregar_comuna(struct lista_comunas* lista_comunas, struct comuna* comuna);
 		Entrada: la lista circular y la comuna
 		Salida: la comuna queda enlazada y pasa a ser el inicio. Si era la primera, se apunta a si misma */
 
-void eliminar_recurso(struct lista_recursos* lista_recursos, char* nombre);
+void eliminar_recurso(struct lista_recursos* lista_recursos, struct string* nombre);
 	/* Saca un recurso de la lista doble y libera su memoria
 		Entrada: la lista y el nombre del recurso
 		Salida: el nodo desaparece y los vecinos quedan enlazados. Si no esta, la lista no cambia */
 
-void eliminar_comuna(struct lista_comunas* lista_comunas, char* nombre);
+void eliminar_comuna(struct lista_comunas* lista_comunas, struct string* nombre);
 	/* Saca una comuna del circulo y libera la comuna con sus listas
 		Entrada: la lista circular y el nombre
 		Salida: el circulo se cierra sin esa comuna. Si era la unica, inicio queda en NULL */

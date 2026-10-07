@@ -1,7 +1,135 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "estructuras.h"
+#include "utils.h"
+
+
+struct lista_archivo* crear_lista_archivo() {
+    struct lista_archivo* lista =
+    calloc(1, sizeof(struct lista_archivo));
+    lista->inicio = NULL;
+    lista->ultimo = NULL;
+    return lista;
+}
+
+/* Libera una lista de archivo
+	Entrada: la lista
+	Salida: la lista queda liberada */
+void liberar_lista_archivo(struct lista_archivo* lista) {
+    struct entrada_lista_archivo* actual = lista->inicio;
+    while (actual != NULL) {
+        struct entrada_lista_archivo* siguiente = actual->siguiente;
+        liberar_entrada_lista_archivo(actual);
+        actual = siguiente;
+    }
+    free(lista);
+}
+
+/* Crea una entrada de lista de archivo
+	Entrada: el nombre y el indice
+	Salida: la entrada creada */
+struct entrada_lista_archivo* crear_entrada_lista_archivo(struct string* nombre, int indice) {
+    struct entrada_lista_archivo* entrada =
+    calloc(1, sizeof(struct entrada_lista_archivo));
+    entrada->nombre = nombre;
+    entrada->indice = indice;
+    entrada->siguiente = NULL;
+    return entrada;
+}
+
+/* Libera una entrada de lista de archivo
+	Entrada: la entrada
+	Salida: la entrada queda liberada */
+void liberar_entrada_lista_archivo(struct entrada_lista_archivo* entrada) {
+    liberar_string(entrada->nombre);
+    free(entrada);
+}
+
+/* Busca una entrada de lista de archivo por indice
+	Entrada: la lista y el indice
+	Salida: la entrada si existe, NULL si no */
+struct entrada_lista_archivo* buscar_entrada_lista_archivo(struct lista_archivo* lista, int indice) {
+    struct entrada_lista_archivo* actual = lista->inicio;
+    while (actual != NULL) {
+        if (actual->indice == indice) {
+            return actual;
+        }
+        actual = actual->siguiente;
+    }
+    return NULL;
+}
+
+/* Agrega una entrada de lista de archivo a la lista
+	Entrada: la lista y la entrada
+	Salida: la entrada queda agregada a la lista */
+void agregar_entrada_lista_archivo(struct lista_archivo* lista, struct entrada_lista_archivo* entrada) {
+    if (lista->inicio == NULL) {
+        lista->inicio = entrada;
+        lista->ultimo = entrada;
+    } else {
+        lista->ultimo->siguiente = entrada;
+        lista->ultimo = entrada;
+    }
+}
+
+/* Elimina una entrada de lista de archivo por nombre
+	Entrada: la lista y el nombre
+	Salida: la entrada queda eliminada de la lista */
+void eliminar_entrada_lista_archivo(struct lista_archivo* lista, struct string* nombre) {
+    struct entrada_lista_archivo* anterior = NULL;
+    struct entrada_lista_archivo* actual = lista->inicio;
+    while (actual != NULL) {
+        if (mismos_nombres(actual->nombre, nombre)) {
+            if (anterior == NULL) {
+                lista->inicio = actual->siguiente;
+            } else {
+                anterior->siguiente = actual->siguiente;
+            }
+            if (lista->ultimo == actual) {
+                lista->ultimo = anterior;
+            }
+            liberar_entrada_lista_archivo(actual);
+            return;
+        }
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+}
+
+/* Baraja la lista de archivo
+	Entrada: la lista
+	Salida: la lista barajada */
+void barajar_lista_archivo(struct lista_archivo* lista) {
+    int cantidad = 0;
+    struct entrada_lista_archivo* actual = lista->inicio;
+    while (actual != NULL) {
+        cantidad++;
+        actual = actual->siguiente;
+    }
+    if (cantidad < 2) {
+        return;
+    }
+
+    struct entrada_lista_archivo** entradas = malloc(cantidad * sizeof(struct entrada_lista_archivo*));
+    actual = lista->inicio;
+    for (int i = 0; i < cantidad; i++) {
+        entradas[i] = actual;
+        actual = actual->siguiente;
+    }
+    for (int i = cantidad - 1; i > 0; i--) {
+        int indice = aleatorio(0, i);
+        struct entrada_lista_archivo* tmp = entradas[i];
+        entradas[i] = entradas[indice];
+        entradas[indice] = tmp;
+    }
+    for (int i = 0; i < cantidad - 1; i++) {
+        entradas[i]->siguiente = entradas[i + 1];
+    }
+    entradas[cantidad - 1]->siguiente = NULL;
+    lista->inicio = entradas[0];
+    lista->ultimo = entradas[cantidad - 1];
+    free(entradas);
+}
 
 /* Crea un char_array con el caracter
 	Entrada: el caracter
@@ -55,7 +183,7 @@ void liberar_string(struct string* string) {
 /* Crea un recurso con nombre, cantidad, maximo y relevancia
 	Entrada: nombre, necesidad, maximo, relevancia, cantidad
 	Salida: el nodo del recurso creado */
-struct nodo_recurso* crear_nodo_recurso(char* nombre, bool necesidad,  int maximo, int relevancia, int cantidad) {
+struct nodo_recurso* crear_nodo_recurso(struct string* nombre, bool necesidad,  int maximo, int relevancia, int cantidad) {
     struct nodo_recurso* recurso =
     calloc(1, sizeof(struct nodo_recurso));
     recurso->nombre = nombre;
@@ -141,10 +269,10 @@ struct comuna* crear_comuna(struct string* nombre) {
 /* Recorre la lista doble hasta encontrar un recurso por nombre
 	Entrada: la lista y el nombre a buscar
 	Salida: el recurso si esta, NULL si no */
-struct nodo_recurso* buscar_recurso(struct lista_recursos* lista_recursos, char* nombre) {
+struct nodo_recurso* buscar_recurso(struct lista_recursos* lista_recursos, struct string* nombre) {
     struct nodo_lista_recursos* nodo_lista_recursos = lista_recursos->inicio;
     while (nodo_lista_recursos != NULL) {
-        if (strcmp(nodo_lista_recursos->recurso->nombre, nombre) == 0) {
+        if (mismos_nombres(nodo_lista_recursos->recurso->nombre, nombre)) {
             return nodo_lista_recursos->recurso;
         }
         nodo_lista_recursos = nodo_lista_recursos->siguiente;
@@ -185,40 +313,22 @@ void agregar_comuna(struct lista_comunas* lista_comunas, struct comuna* comuna) 
     }
 }
 
-/* Compara el nombre enlazado de una comuna con una cadena de C */
-static int mismo_nombre(struct string* nombre, char* cadena) {
-    struct char_array* actual = NULL;
-    int i = 0;
-    if (nombre == NULL || cadena == NULL) {
-        return nombre == NULL && cadena == NULL;
-    }
-    actual = nombre->inicio;
-    while (actual != NULL && cadena[i] != '\0') {
-        if (actual->caracter != cadena[i]) {
-            return 0;
-        }
-        actual = actual->siguiente;
-        i++;
-    }
-    return actual == NULL && cadena[i] == '\0';
-}
-
 /* Da una vuelta al circulo buscando una comuna por nombre
 	Entrada: la lista circular y el nombre
 	Salida: el nodo de la comuna si esta, NULL si la lista esta vacia o no aparece */
-struct nodo_lista_comunas* buscar_comuna(struct lista_comunas* lista_comunas, char* nombre) {
+struct nodo_lista_comunas* buscar_comuna(struct lista_comunas* lista_comunas, struct string* nombre) {
     struct nodo_lista_comunas* nodo = lista_comunas->inicio;
     if (nodo == NULL) {
         return NULL;
     }
 
-    if (mismo_nombre(nodo->comuna->nombre, nombre)) {
+    if (mismos_nombres(nodo->comuna->nombre, nombre)) {
         return nodo;
     }
     nodo = nodo->siguiente;
 
     while (nodo != lista_comunas->inicio) {
-        if (mismo_nombre(nodo->comuna->nombre, nombre)) {
+        if (mismos_nombres(nodo->comuna->nombre, nombre)) {
             return nodo;
         }
         nodo = nodo->siguiente;
@@ -229,10 +339,10 @@ struct nodo_lista_comunas* buscar_comuna(struct lista_comunas* lista_comunas, ch
 /* Saca un recurso de la lista doble y libera su memoria
 	Entrada: la lista y el nombre del recurso
 	Salida: el nodo desaparece y los vecinos quedan enlazados. Si no esta, la lista no cambia */
-void eliminar_recurso(struct lista_recursos* lista_recursos, char* nombre) {
+void eliminar_recurso(struct lista_recursos* lista_recursos, struct string* nombre) {
     struct nodo_lista_recursos* nodo = lista_recursos->inicio;
     while (nodo != NULL) {
-        if (strcmp(nodo->recurso->nombre, nombre) == 0) {
+        if (mismos_nombres(nodo->recurso->nombre, nombre)) {
             if (nodo->anterior != NULL) {
                 nodo->anterior->siguiente = nodo->siguiente;
             } else {
@@ -252,13 +362,13 @@ void eliminar_recurso(struct lista_recursos* lista_recursos, char* nombre) {
 /* Saca una comuna del circulo y libera la comuna con sus listas
 	Entrada: la lista circular y el nombre
 	Salida: el circulo se cierra sin esa comuna. Si era la unica, inicio queda en NULL */
-void eliminar_comuna(struct lista_comunas* lista_comunas, char* nombre) {
+void eliminar_comuna(struct lista_comunas* lista_comunas, struct string* nombre) {
     struct nodo_lista_comunas* nodo = lista_comunas->inicio;
     if (nodo == NULL) {
         return;
     }
 
-    if (mismo_nombre(nodo->comuna->nombre, nombre)) {
+    if (mismos_nombres(nodo->comuna->nombre, nombre)) {
         if (nodo->siguiente == nodo) {
             lista_comunas->inicio = NULL;
         } else {
@@ -273,7 +383,7 @@ void eliminar_comuna(struct lista_comunas* lista_comunas, char* nombre) {
     nodo = nodo->siguiente;
 
     while (nodo != lista_comunas->inicio) {
-        if (mismo_nombre(nodo->comuna->nombre, nombre)) {
+        if (mismos_nombres(nodo->comuna->nombre, nombre)) {
             nodo->anterior->siguiente = nodo->siguiente;
             nodo->siguiente->anterior = nodo->anterior;
             liberar_comuna(nodo->comuna);
@@ -286,9 +396,9 @@ void eliminar_comuna(struct lista_comunas* lista_comunas, char* nombre) {
 
 /* Libera un recurso y su nombre
 	Entrada: el recurso
-	Salida: la memoria del recurso queda libre. El nombre tiene que haber salido de malloc */
+	Salida: la memoria del recurso y su nombre quedan libres */
 void liberar_recurso(struct nodo_recurso* recurso) {
-    free(recurso->nombre);
+    liberar_string(recurso->nombre);
     free(recurso);
 }
 
