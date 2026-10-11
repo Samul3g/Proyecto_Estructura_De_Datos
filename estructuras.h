@@ -84,8 +84,8 @@ struct comuna {
     struct string* nombre;
     struct lista_recursos* bienes;
     struct lista_recursos* servicios;
-	int satisfaccion;
-	int necesidad;
+	float satisfaccion;
+	float necesidad;
 };
 
 struct nodo_lista_comunas {
