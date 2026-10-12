@@ -1,77 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "estructuras.h"
 #include "generacion_datos.h"
 #include "utils.h"
 
-/* Obtiene el siguiente caracter del archivo 
-    Entrada: el archivo
-    Salida: el siguiente caracter del archivo */
-int siguiente_caracter(FILE* archivo) {
-    return fgetc(archivo);
-}
-
-/* Obtiene la linea del archivo 
-    Entrada: el archivo
-    Salida: la linea del archivo */
-struct string* linea_archivo(FILE* archivo) {
-
-    if (archivo == NULL) {
-        return NULL;
-    }
-
-    struct string* linea = crear_string("");
-    struct char_array* actual = NULL;
-    int c = siguiente_caracter(archivo);
-    while (c != '\n' && c != EOF) {
-        if (actual == NULL) {
-            actual = crear_char_array(c);
-            linea->inicio = actual;
-        } else {
-            actual->siguiente = crear_char_array(c);
-            actual = actual->siguiente;
-        }
-        c = siguiente_caracter(archivo);
-    }
-    if (c == EOF) {
-        return NULL;
-    } else {
-        return linea;
-    }
-}
-
-/* Genera la lista de archivos a partir de un archivo de lectura
-    Entrada: el archivo
-   Salida: la lista de archivos */
-struct lista_archivo* generar_lista_archivo(FILE* archivo) {
-
-    if (archivo == NULL) {
-        return NULL;
-    }
-
-    struct lista_archivo* lista = crear_lista_archivo();
-    struct string* linea = linea_archivo(archivo);
-    int indice = 0;
-    while (linea != NULL) {
-        agregar_entrada_lista_archivo(lista, crear_entrada_lista_archivo(linea, indice));
-        indice++;
-        linea = linea_archivo(archivo);
-    }
-    return lista;
-}
-
-/* Lee el archivo y lo devuelve como arhivo de lectura
-    Entrada: el nombre del archivo
-    Salida: el archivo de lectura */ 
-FILE* leer_archivo(char* nombre) {
-    FILE* archivo = fopen(nombre, "r");
-    if (archivo == NULL) {
-        printf("Error al abrir el archivo %s\n", nombre);
-        exit(1);
-    }
-    return archivo;
-}
 /* Genera la lista de comunas a partir de una lista de archivos con los nombres de las comunas
     Entrada: la lista de archivos
     Salida: la lista de comunas */
@@ -86,7 +17,19 @@ struct lista_comunas* generar_lista_comunas(struct lista_archivo* lista_archivo,
     struct entrada_lista_archivo* actual = lista_archivo->inicio;
 
     while (actual != NULL && indice < cantidad_comunas) {
-        agregar_comuna(lista, crear_comuna(actual->nombre));
+        struct char_array* c = actual->nombre->inicio;
+        struct string* nombre = crear_string("");
+        nombre->inicio = crear_char_array(c->caracter);
+
+        struct char_array* copiar = nombre->inicio;
+        c = c->siguiente;
+        while (c != NULL) {
+            copiar->siguiente = crear_char_array(c->caracter);
+            copiar = copiar->siguiente;
+            c = c->siguiente;
+        }
+
+        agregar_comuna(lista, crear_comuna(nombre));
         indice++;
         actual = actual->siguiente;
     }
@@ -96,7 +39,7 @@ struct lista_comunas* generar_lista_comunas(struct lista_archivo* lista_archivo,
 /* Genera la lista de recursos a partir de una lista de archivos con los nombres  y datos de los recursos
     Entrada: la lista de archivos con los nombres y datos de los recursos
     Salida: la lista de recursos */
-struct lista_recursos* generar_lista_recursos(struct lista_archivo* lista_archivo, int cantidad, int cantidad_personas) {
+struct lista_recursos* generar_lista_recursos(struct lista_archivo* lista_archivo, int cantidad_recursos, int cantidad_personas) {
     if (lista_archivo == NULL) {
         return NULL;
     }
@@ -104,74 +47,10 @@ struct lista_recursos* generar_lista_recursos(struct lista_archivo* lista_archiv
     struct lista_recursos* lista = crear_lista_recursos();
     int indice = 0;
     struct entrada_lista_archivo* actual = lista_archivo->inicio;
-    while (actual != NULL && indice < cantidad) {
-
-
-        bool es_necesidad = 1;
-        int maximo_int = 0;
-        int relevancia_int = 0;
-        int cantidad = 0;
-
-        struct char_array* c = actual->nombre->inicio;
-        struct string* nombre = crear_string("");
-
-        nombre->inicio = crear_char_array(c->caracter);
-
-        struct char_array* nombre_recorrer = nombre->inicio;
-        c = c->siguiente;
-        while (c->caracter != ',') {
-            nombre_recorrer->siguiente = crear_char_array(c->caracter);
-            nombre_recorrer = nombre_recorrer->siguiente;
-            c = c->siguiente;
-        }
-
-        c = c->siguiente;
-
-        char necesidad[10];
-        int i = 0;
-
-        while (c->caracter != ',') {
-            necesidad[i] = c->caracter;
-            i++;
-            c = c->siguiente;
-        }
-
-        necesidad[i] = '\0';
-
-        if (strcmp(necesidad, "true") == 0) {
-             es_necesidad = 1;
-        } else {
-             es_necesidad = 0;
-        }
-        i = 0;
-
-        c = c->siguiente;
-        char maximo[8];
-        while (c->caracter != ',') {
-            maximo[i] = c->caracter;
-            i++;
-            c = c->siguiente;
-        }
-        maximo[i] = '\0';
-        
-        maximo_int = atoi(maximo) * cantidad_personas * 0.1;
-        i = 0;
-
-        c = c->siguiente;
-        char relevancia[6];
-        while (c != NULL) {
-            relevancia[i] = c->caracter;
-            i++;
-            c = c->siguiente;
-        }
-        
-        relevancia[i] = '\0';
-
-        relevancia_int = atoi(relevancia);
-
-        cantidad = aleatorio(0, maximo_int);
-
-        agregar_recurso(lista, crear_nodo_recurso(nombre, es_necesidad, maximo_int, relevancia_int, cantidad));
+    while (actual != NULL && indice < cantidad_recursos) {
+        struct nodo_recurso* recurso = crear_recurso_desde_linea(actual->nombre, cantidad_personas);
+        recurso->cantidad = aleatorio(0, recurso->maximo);
+        agregar_recurso(lista, recurso);
         indice++;
         actual = actual->siguiente;
     }

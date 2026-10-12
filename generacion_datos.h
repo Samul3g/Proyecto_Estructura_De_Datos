@@ -3,11 +3,6 @@
 
 #include "estructuras.h"
 
-/* Genera la lista de archivos a partir de un archivo de lectura
-    Entrada: el archivo de lectura
-    Salida: la lista de archivos */
-struct lista_archivo* generar_lista_archivo(FILE* archivo_lectura);
-
 /* Genera la lista de comunas a partir de una lista de archivos con los nombres de las comunas
     Entrada: la lista de archivos
     Salida: la lista de comunas */
@@ -16,7 +11,7 @@ struct lista_comunas* generar_lista_comunas(struct lista_archivo* lista_archivo,
 /* Genera la lista de recursos a partir de una lista de archivos con los nombres y datos de los recursos
     Entrada: la lista de archivos con los nombres y datos de los recursos
     Salida: la lista de recursos */
-struct lista_recursos* generar_lista_recursos(struct lista_archivo* lista_archivo, int cantidad);
+struct lista_recursos* generar_lista_recursos(struct lista_archivo* lista_archivo, int cantidad_recursos, int cantidad_personas);
 
 /* Genera la lista de personas a partir de una lista de archivos con los nombres
     Entrada: la lista de archivos con los nombres y cuantas personas lleva cada comuna

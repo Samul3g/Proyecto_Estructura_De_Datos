@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include "utils.h"
 
@@ -32,6 +33,136 @@ int aleatorio(int minimo, int maximo) {
 	return numero_aleatorio;
 }
 
+/* Obtiene el siguiente caracter del archivo
+	Entrada: el archivo
+	Salida: el siguiente caracter del archivo */
+int siguiente_caracter(FILE* archivo) {
+	return fgetc(archivo);
+}
 
+/* Obtiene la linea del archivo
+	Entrada: el archivo
+	Salida: la linea del archivo */
+struct string* linea_archivo(FILE* archivo) {
+	if (archivo == NULL) {
+		return NULL;
+	}
 
+	struct string* linea = crear_string("");
+	struct char_array* actual = NULL;
+	int c = siguiente_caracter(archivo);
+	while (c != '\n' && c != EOF) {
+		if (actual == NULL) {
+			actual = crear_char_array(c);
+			linea->inicio = actual;
+		} else {
+			actual->siguiente = crear_char_array(c);
+			actual = actual->siguiente;
+		}
+		c = siguiente_caracter(archivo);
+	}
+	if (c == EOF) {
+		return NULL;
+	} else {
+		return linea;
+	}
+}
 
+/* Genera la lista de archivos a partir de un archivo de lectura
+	Entrada: el archivo
+	Salida: la lista de archivos */
+struct lista_archivo* generar_lista_archivo(FILE* archivo) {
+	if (archivo == NULL) {
+		return NULL;
+	}
+
+	struct lista_archivo* lista = crear_lista_archivo();
+	struct string* linea = linea_archivo(archivo);
+	int indice = 0;
+	while (linea != NULL) {
+		agregar_entrada_lista_archivo(lista, crear_entrada_lista_archivo(linea, indice));
+		indice++;
+		linea = linea_archivo(archivo);
+	}
+	return lista;
+}
+
+/* Lee el archivo y lo devuelve como archivo de lectura
+	Entrada: el nombre del archivo
+	Salida: el archivo de lectura */
+FILE* leer_archivo(char* nombre) {
+	FILE* archivo = fopen(nombre, "r");
+	if (archivo == NULL) {
+		printf("Error al abrir el archivo %s\n", nombre);
+		exit(1);
+	}
+	return archivo;
+}
+
+/* Arma un recurso a partir de una linea nombre,necesidad,maximo,relevancia
+	Entrada: la linea y cuantas personas viven en la comuna
+	Salida: el recurso, con el maximo calculado y cantidad en 0 */
+struct nodo_recurso* crear_recurso_desde_linea(struct string* linea, int cantidad_personas) {
+	bool es_necesidad = 1;
+	int maximo_int = 0;
+	int relevancia_int = 0;
+
+	struct char_array* c = linea->inicio;
+	struct string* nombre = crear_string("");
+
+	nombre->inicio = crear_char_array(c->caracter);
+
+	struct char_array* nombre_recorrer = nombre->inicio;
+	c = c->siguiente;
+	while (c->caracter != ',') {
+		nombre_recorrer->siguiente = crear_char_array(c->caracter);
+		nombre_recorrer = nombre_recorrer->siguiente;
+		c = c->siguiente;
+	}
+
+	c = c->siguiente;
+
+	char necesidad[10];
+	int i = 0;
+
+	while (c->caracter != ',') {
+		necesidad[i] = c->caracter;
+		i++;
+		c = c->siguiente;
+	}
+
+	necesidad[i] = '\0';
+
+	if (strcmp(necesidad, "true") == 0) {
+		es_necesidad = 1;
+	} else {
+		es_necesidad = 0;
+	}
+	i = 0;
+
+	c = c->siguiente;
+	char maximo[8];
+	while (c->caracter != ',') {
+		maximo[i] = c->caracter;
+		i++;
+		c = c->siguiente;
+	}
+	maximo[i] = '\0';
+
+	maximo_int = atoi(maximo) * cantidad_personas * 0.1;
+	i = 0;
+
+	c = c->siguiente;
+	char relevancia[6];
+	while (c != NULL) {
+		relevancia[i] = c->caracter;
+		i++;
+		c = c->siguiente;
+	}
+
+	relevancia[i] = '\0';
+
+	relevancia_int = atoi(relevancia);
+
+	return crear_nodo_recurso(nombre, es_necesidad, maximo_int, relevancia_int, 0);
+}

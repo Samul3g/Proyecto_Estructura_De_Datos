@@ -13,17 +13,19 @@ El orden dentro de cada sección es el orden para implementarlos. Si un punto es
 Van primero. Sin esto el programa no compila junto y no se puede reducir ni aumentar nada.
 
 - [X] `manejo_recursos.h` declara la comuna como `char*`. `manejo_recursos.c` la usa como `struct comuna*`.
-- [ ] `buscar_recurso` recibe un `struct string*`. Las funciones de reducir y aumentar le pasan un `char*`.
+- [X] `buscar_recurso` recibe un `struct string*`. Las funciones de reducir y aumentar le pasan un `char*`.
+- [X] `aumento_bien` y `aumento_servicio` devuelven 0 si la comuna no tiene ese recurso. Al recibir un regalo de un bien o servicio que no tiene, hay que agregarlo, con la cantidad regalada. El máximo, la necesidad y la relevancia salen del recurso de la comuna que lo da.
+  Antes del intercambio del día.
 
 
 ### generacion_datos.c
 
-Antes de que `main` arme la sociedad. El último de estos cuatro tiene que estar listo antes del intercambio.
+Antes de que `main` arme la sociedad.
 
-- [ ] En `generar_lista_recursos`, una variable local llamada `cantidad` tapa el parámetro del mismo nombre.
-- [ ] El nombre de la comuna es el mismo `struct string*` de la lista leída del archivo, sin copia. Si esa lista se libera, la comuna queda apuntando a memoria libre.
+- [X] En `generar_lista_recursos`, una variable local llamada `cantidad` tapa el parámetro del mismo nombre.
+- [X] El nombre de la comuna es el mismo `struct string*` de la lista leída del archivo, sin copia. Si esa lista se libera, la comuna queda apuntando a memoria libre.
+<Baja Peoridad, ignorar por el momento>
 - [ ] Si una línea de `bienes` o `servicios` no trae las comas esperadas, el lector usa un puntero nulo y el programa se cae.
-- [ ] Cada comuna baraja bienes y servicios por su cuenta, así que dos comunas pueden no compartir el mismo recurso. El regalo busca ese nombre en la otra y no lo encuentra.
 
 
 
@@ -94,7 +96,7 @@ Después de la sociedad, de los índices guardados y de `manejo_recursos`.
 ### main.c
 
 - [ ] El intercambio durante el día: la persona usuaria elige qué pasa de una comuna a otra, y eso cambia los índices.
-  Después del regalo que avisa si falló, de que las comunas compartan bienes y servicios, y de los índices guardados.
+  Después del regalo que avisa si falló, de que el aumento agregue un recurso que la comuna no tenía, y de los índices guardados.
 
 ### simulacion.c
 
