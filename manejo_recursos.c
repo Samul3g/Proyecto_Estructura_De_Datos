@@ -3,11 +3,10 @@
 #include <stdio.h>
 #include "manejo_recursos.h"
 
-/*Funcion que reduce los servicios que posee una comuna
-	* Entradas: servicio, cantidad, comuna
-	* salidas: 0 (false/error), 1 (true/exito) 
-*/
-int reduccion_servicio(char* servicio, int cantidad, struct comuna* comuna){
+/* Funcion que reduce los servicios que posee una comuna
+	Entrada: servicio, cantidad, comuna
+	Salida: 0 (false/error), 1 (true/exito) */
+int reduccion_servicio(struct string* servicio, int cantidad, struct comuna* comuna){
 		
 		
 		// validaciones
@@ -37,11 +36,10 @@ int reduccion_servicio(char* servicio, int cantidad, struct comuna* comuna){
 }
 
 
-/*Funcion que reduce los bienes que posee una comuna
-	* Entradas: bien, cantidad, comuna
-	* salidas: 0 (false/error), 1 (true/exito) 
-*/
-int reduccion_bien(char* bien, int cantidad, struct comuna* comuna){
+/* Funcion que reduce los bienes que posee una comuna
+	Entrada: bien, cantidad, comuna
+	Salida: 0 (false/error), 1 (true/exito) */
+int reduccion_bien(struct string* bien, int cantidad, struct comuna* comuna){
 		
 		
 		// validaciones
@@ -71,11 +69,10 @@ int reduccion_bien(char* bien, int cantidad, struct comuna* comuna){
 }
 
 
-/*Funcion que aumenta los servicios que posee una comuna
-	* Entradas: servicio, cantidad, comuna
-	* salidas: 0 (false/error), 1 (true/exito) 
-*/
-int aumento_servicio(char* servicio, int cantidad, struct comuna* comuna){
+/* Funcion que aumenta los servicios que posee una comuna
+	Entrada: servicio, cantidad, comuna
+	Salida: 0 (false/error), 1 (true/exito) */
+int aumento_servicio(struct string* servicio, int cantidad, struct comuna* comuna){
 		
 		
 		// validaciones
@@ -107,11 +104,10 @@ int aumento_servicio(char* servicio, int cantidad, struct comuna* comuna){
 
 
 
-/*Funcion que aumenta los bienes que posee una comuna
-	* Entradas: bien, cantidad, comuna
-	* salidas: 0 (false/error), 1 (true/exito) 
-*/
-int aumento_bien(char* bien, int cantidad, struct comuna* comuna){
+/* Funcion que aumenta los bienes que posee una comuna
+	Entrada: bien, cantidad, comuna
+	Salida: 0 (false/error), 1 (true/exito) */
+int aumento_bien(struct string* bien, int cantidad, struct comuna* comuna){
 		
 		
 		// validaciones

@@ -12,7 +12,7 @@ El orden dentro de cada sección es el orden para implementarlos. Si un punto es
 
 Van primero. Sin esto el programa no compila junto y no se puede reducir ni aumentar nada.
 
-- [ ] `manejo_recursos.h` declara la comuna como `char*`. `manejo_recursos.c` la usa como `struct comuna*`.
+- [X] `manejo_recursos.h` declara la comuna como `char*`. `manejo_recursos.c` la usa como `struct comuna*`.
 - [ ] `buscar_recurso` recibe un `struct string*`. Las funciones de reducir y aumentar le pasan un `char*`.
 
 
