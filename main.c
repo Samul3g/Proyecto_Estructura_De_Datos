@@ -5,6 +5,7 @@
 	int cantidad_comunas = 0;
 	int bienes = 0;
 	int servicios = 0;
+	int personas = 0;
 
 
 void saludo_inicio(){
@@ -38,6 +39,7 @@ void configuracion_inicial(){
 	int cant_bienes = 0;
 	int cant_comunas = 0;
 	int cant_servicios = 0;
+	int cant_personas = 0;
 	
 	//pedir cantidad comunas
 	
@@ -83,6 +85,22 @@ void configuracion_inicial(){
 			scanf("%d", &cant_servicios);
 		}else{
 			servicios = cant_servicios;
+			correcto = 1;
+		}
+	}
+
+	correcto = 0;
+
+	//pedir cantidad personas
+	printf("\n\nInserte la cantidad de personas que quiere (entre 1 y 500): ");
+	scanf("%d", &cant_personas);
+	while(correcto == 0){
+		if(cant_personas < 1 || cant_personas > 500){
+			printf("\033[31m\nValor invalido.");
+			printf("\033[0m Inserte la cantidad de personas que quiere (entre 1 y 500): ");
+			scanf("%d", &cant_personas);
+		}else{
+			personas = cant_personas;
 			correcto = 1;
 		}
 	}

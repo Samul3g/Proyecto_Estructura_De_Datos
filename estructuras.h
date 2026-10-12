@@ -54,6 +54,60 @@ void barajar_lista_archivo(struct lista_archivo* lista);
 		Entrada: la lista
 		Salida: la lista barajada */
 
+struct persona {
+	struct string* nombre;
+};
+
+struct nodo_lista_personas {
+	struct persona* persona;
+	struct nodo_lista_personas* siguiente;
+};
+
+struct lista_personas {
+	struct nodo_lista_personas* inicio;
+	struct nodo_lista_personas* ultimo;
+};
+
+struct lista_personas* crear_lista_personas();
+	/* Crea una lista de personas
+		Entrada: ninguna
+		Salida: la lista creada */
+
+struct persona* crear_persona(struct string* nombre);
+	/* Crea una persona
+		Entrada: el nombre
+		Salida: la persona creada */
+
+struct nodo_lista_personas* crear_nodo_lista_personas(struct persona* persona);
+	/* Crea un nodo de lista de personas
+		Entrada: la persona
+		Salida: el nodo creado */
+
+void agregar_persona(struct lista_personas* lista, struct persona* persona);
+	/* Agrega una persona al final de la lista
+		Entrada: la lista y la persona
+		Salida: la persona queda agregada a la lista */
+
+void liberar_persona(struct persona* persona);
+	/* Libera una persona y su nombre
+		Entrada: la persona
+		Salida: la persona queda liberada */
+
+void liberar_nodo_lista_personas(struct nodo_lista_personas* nodo);
+	/* Libera un nodo de lista de personas y la persona
+		Entrada: el nodo
+		Salida: el nodo queda liberado */
+
+void liberar_lista_personas(struct lista_personas* lista);
+	/* Libera una lista de personas
+		Entrada: la lista
+		Salida: la lista queda liberada */
+
+int largo_personas(struct lista_personas* lista);
+	/* Cuenta las personas de la lista
+		Entrada: la lista
+		Salida: el largo de la lista */
+
 struct string {
 	struct char_array* inicio;
 };
@@ -84,6 +138,7 @@ struct comuna {
     struct string* nombre;
     struct lista_recursos* bienes;
     struct lista_recursos* servicios;
+    struct lista_personas* personas;
 	float satisfaccion;
 	float necesidad;
 };

@@ -131,6 +131,99 @@ void barajar_lista_archivo(struct lista_archivo* lista) {
     free(entradas);
 }
 
+/* Crea una lista de personas
+	Entrada: ninguna
+	Salida: la lista creada */
+struct lista_personas* crear_lista_personas() {
+    struct lista_personas* lista =
+    calloc(1, sizeof(struct lista_personas));
+    lista->inicio = NULL;
+    lista->ultimo = NULL;
+    return lista;
+}
+
+/* Crea una persona
+	Entrada: el nombre
+	Salida: la persona creada */
+struct persona* crear_persona(struct string* nombre) {
+    struct persona* persona =
+    calloc(1, sizeof(struct persona));
+    persona->nombre = nombre;
+    return persona;
+}
+
+/* Crea un nodo de lista de personas
+	Entrada: la persona
+	Salida: el nodo creado */
+struct nodo_lista_personas* crear_nodo_lista_personas(struct persona* persona) {
+    struct nodo_lista_personas* nodo =
+    calloc(1, sizeof(struct nodo_lista_personas));
+    nodo->persona = persona;
+    nodo->siguiente = NULL;
+    return nodo;
+}
+
+/* Agrega una persona al final de la lista
+	Entrada: la lista y la persona
+	Salida: la persona queda agregada a la lista */
+void agregar_persona(struct lista_personas* lista, struct persona* persona) {
+    struct nodo_lista_personas* nodo = crear_nodo_lista_personas(persona);
+    if (lista->inicio == NULL) {
+        lista->inicio = nodo;
+        lista->ultimo = nodo;
+    } else {
+        lista->ultimo->siguiente = nodo;
+        lista->ultimo = nodo;
+    }
+}
+
+/* Libera una persona y su nombre
+	Entrada: la persona
+	Salida: la persona queda liberada */
+void liberar_persona(struct persona* persona) {
+    liberar_string(persona->nombre);
+    free(persona);
+}
+
+/* Libera un nodo de lista de personas y la persona
+	Entrada: el nodo
+	Salida: el nodo queda liberado */
+void liberar_nodo_lista_personas(struct nodo_lista_personas* nodo) {
+    liberar_persona(nodo->persona);
+    free(nodo);
+}
+
+/* Libera una lista de personas
+	Entrada: la lista
+	Salida: la lista queda liberada */
+void liberar_lista_personas(struct lista_personas* lista) {
+    struct nodo_lista_personas* actual = lista->inicio;
+    while (actual != NULL) {
+        struct nodo_lista_personas* siguiente = actual->siguiente;
+        liberar_nodo_lista_personas(actual);
+        actual = siguiente;
+    }
+    free(lista);
+}
+
+/* Cuenta las personas de la lista
+	Entrada: la lista
+	Salida: el largo de la lista */
+int largo_personas(struct lista_personas* lista) {
+    struct nodo_lista_personas* nodo = lista->inicio;
+    if (nodo == NULL) {
+        return 0;
+    }
+
+    int largo = 1;
+    nodo = nodo->siguiente;
+    while (nodo != NULL) {
+        largo++;
+        nodo = nodo->siguiente;
+    }
+    return largo;
+}
+
 /* Crea un char_array con el caracter
 	Entrada: el caracter
 	Salida: el char_array creado */
@@ -261,6 +354,7 @@ struct comuna* crear_comuna(struct string* nombre) {
     comuna->nombre = nombre;
     comuna->bienes = crear_lista_recursos();
     comuna->servicios = crear_lista_recursos();
+    comuna->personas = crear_lista_personas();
     comuna->satisfaccion = 0;
     comuna->necesidad = 0;
     return comuna;
@@ -422,6 +516,7 @@ void liberar_lista_recursos(struct lista_recursos* lista_recursos) {
 void liberar_comuna(struct comuna* comuna) {
     liberar_lista_recursos(comuna->bienes);
     liberar_lista_recursos(comuna->servicios);
+    liberar_lista_personas(comuna->personas);
     liberar_string(comuna->nombre);
     free(comuna);
 }   
