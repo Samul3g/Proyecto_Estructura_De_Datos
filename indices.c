@@ -47,7 +47,7 @@ float carencia(struct nodo_lista_recursos* nodo){
  * Entradas: lista, numerador y denominador
  * Salidas: ninguna
  */
-int sumatoria_recursos(struct lista_recursos* lista){
+float sumatoria_recursos(struct lista_recursos* lista){
 	
 	if(lista == NULL){
 			return -1;
@@ -123,7 +123,7 @@ float calcular_satisfaccion(struct nodo_lista_comunas* nodo_lista_comunas){
 	
 	float promedio = (necesidad_ant + necesidad_ant2 + necesidad_sig + necesidad_sig2 + necesidad_propia) / 5;
 	
-	return 100 - promedio;
+	return 100.00 - promedio;
 	
 	
 	}

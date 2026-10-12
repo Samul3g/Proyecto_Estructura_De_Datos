@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "main.h"
 
 	//Variables globales
 	int cantidad_comunas = 0;
@@ -8,8 +9,11 @@
 	int personas = 0;
 
 
+/* Funcion de impresion del logo y saludo inicial
+ * Entradas: nada
+ * Salidas: nada
+ */
 void saludo_inicio(){
-	// Funcion de impresion del logo y saludo inicial
 	printf("\033[33m                      \\ | /");
 	printf("\033[33m\n                    --- ☀ ---");
 	printf("\033[33m\n                      / | \\");
@@ -28,10 +32,13 @@ void saludo_inicio(){
 	printf("\n\n                Estructuras de Datos, IIS 2026");
 }
 
+
+
+/* Funcion que pide los valores de las comunas, bienes y servicios que el usuario pida y los coloca en variables globales
+ * Entradas: nada
+ * Salidas: ninguna*/
 void configuracion_inicial(){
 	saludo_inicio();
-	
-	// Funcion que pide los valores de las comunas, bienes y servicios que el usuario pidas y los coloca en variables globales
 	
 	int correcto = 0; // ayuda para hacer validaciones
 	
@@ -43,13 +50,13 @@ void configuracion_inicial(){
 	
 	//pedir cantidad comunas
 	
-	printf("\n\nInserte la cantidad de comunas que quiere (entre 1 y 500): ");
+	printf("\n\nInserte la cantidad de comunas que quiere (entre 1 y 50): ");
 	scanf("%d", &cant_comunas);
 	
 	while(correcto == 0){
-		if(cant_comunas < 1 || cant_comunas > 500){
+		if(cant_comunas < 1 || cant_comunas > 50){
 			printf("\033[31m\nValor invalido.");
-			printf("\033[0m Inserte la cantidad de comunas que quiere (entre 1 y 500): ");
+			printf("\033[0m Inserte la cantidad de comunas que quiere (entre 1 y 50): ");
 			scanf("%d", &cant_comunas);
 		}else{
 			cantidad_comunas = cant_comunas;
@@ -104,11 +111,9 @@ void configuracion_inicial(){
 			correcto = 1;
 		}
 	}
-		
-	
-	
-	}
+}
 
+/*Funcion principal de toda la simulacion*/
 int main(){
 	configuracion_inicial();
 	
