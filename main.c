@@ -113,6 +113,16 @@ void configuracion_inicial(){
 	}
 }
 
+
+
+
+int usuario_intercambio(struct lista_comunas* lista_comunas){
+	imprimir_lista_comunas(lista_comunas);
+	
+	
+	
+	}
+
 /*Funcion principal de toda la simulacion*/
 int main(){
 	configuracion_inicial();

@@ -204,7 +204,7 @@ struct lista_comunas* crear_lista_comunas();
 		Entrada: ninguna
 		Salida: la lista, con inicio en NULL */
 
-void imprimit_lista_comunas(struct lista_comunas* lista_comunas);
+void imprimir_lista_comunas(struct lista_comunas* lista_comunas);
 	/* Imprime la lista circular de comunas
 		Entrada: la lista circular
 		Salida: la lista circular impresa */

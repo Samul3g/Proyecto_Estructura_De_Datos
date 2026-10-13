@@ -329,12 +329,14 @@ struct lista_comunas* crear_lista_comunas() {
     return lista_comunas;
 }
 
-void imprimit_lista_comunas(struct lista_comunas* lista_comunas) {
+void imprimir_lista_comunas(struct lista_comunas* lista_comunas) {
     struct nodo_lista_comunas* nodo = lista_comunas->inicio;
     if (nodo == NULL) {
         return;
     }
+    int i = 1;
     do {
+		printf("%d. ", i, ". ");
         struct char_array* actual = nodo->comuna->nombre->inicio;
         while (actual != NULL) {
             putchar(actual->caracter);
@@ -342,6 +344,7 @@ void imprimit_lista_comunas(struct lista_comunas* lista_comunas) {
         }
         putchar('\n');
         nodo = nodo->siguiente;
+        i++;
     } while (nodo != lista_comunas->inicio);
 }
 
