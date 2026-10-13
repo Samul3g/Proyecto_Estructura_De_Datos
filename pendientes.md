@@ -28,7 +28,10 @@ Antes de que `main` arme la sociedad.
 - [ ] Si una línea de `bienes` o `servicios` no trae las comas esperadas, el lector usa un puntero nulo y el programa se cae.
 
 
+### generacion_datos.c
 
+- [X] `agregar_recursos_comunas` sustituye las listas vacías que creó `crear_comuna` y esa memoria no se libera.
+  Hacerlo antes de crear la sociedad, junto con los otros arreglos de este archivo.
 
 
 
@@ -46,11 +49,6 @@ Antes de que `main` arme la sociedad.
 
 - [ ] `main` acepta de 1 a 500 comunas. El archivo `comunas` tiene 50, así que el tope es 50.
   Hacerlo antes de que `main` llame a `generar_datos`.
-
-### generacion_datos.c
-
-- [ ] `agregar_recursos_comunas` sustituye las listas vacías que creó `crear_comuna` y esa memoria no se libera.
-  Hacerlo antes de crear la sociedad, junto con los otros arreglos de este archivo.
 
 ### simulacion.c
 

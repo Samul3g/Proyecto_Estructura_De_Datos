@@ -30,6 +30,7 @@ struct lista_comunas* generar_lista_comunas(struct lista_archivo* lista_archivo,
         }
 
         agregar_comuna(lista, crear_comuna(nombre));
+
         indice++;
         actual = actual->siguiente;
     }
@@ -100,6 +101,9 @@ void agregar_recursos_comunas(struct lista_comunas* lista_comunas, struct lista_
     barajar_lista_archivo(lista_bienes);
     barajar_lista_archivo(lista_servicios);
     barajar_lista_archivo(lista_personas);
+    liberar_lista_recursos(actual -> comuna -> bienes);
+    liberar_lista_recursos(actual -> comuna -> servicios);
+    liberar_lista_personas(actual -> comuna -> personas);
     actual -> comuna -> bienes = generar_lista_recursos(lista_bienes, cantidad_bienes, cantidad_personas);
     actual -> comuna -> servicios = generar_lista_recursos(lista_servicios, cantidad_servicios, cantidad_personas);
     actual -> comuna -> personas = generar_lista_personas(lista_personas, cantidad_personas);
@@ -109,6 +113,9 @@ void agregar_recursos_comunas(struct lista_comunas* lista_comunas, struct lista_
     actual = actual->siguiente;
 
     while (actual != inicio) {
+        liberar_lista_recursos(actual -> comuna -> bienes);
+        liberar_lista_recursos(actual -> comuna -> servicios);
+        liberar_lista_personas(actual -> comuna -> personas);
         actual -> comuna -> bienes = generar_lista_recursos(lista_bienes, cantidad_bienes, cantidad_personas);
         actual -> comuna -> servicios = generar_lista_recursos(lista_servicios, cantidad_servicios, cantidad_personas);
         actual -> comuna -> personas = generar_lista_personas(lista_personas, cantidad_personas);
