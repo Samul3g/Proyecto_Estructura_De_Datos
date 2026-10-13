@@ -118,31 +118,7 @@ void configuracion_inicial(){
 }
 
 
-/*Funcion que imprime una lista de recursos
- * Entradas: lista recursos
- * Salidas: impresion en la consola y 0 en caso de fallo, 1 en caso de exito
- */
- int imprimir_recurso(struct lista_recursos* lista){
-	if(lista == NULL){
-			return 0;
-	}
-	
-	struct nodo_lista_recursos* nodo = lista->inicio;
-	int numero = 1;
-	 
-    while (nodo != NULL) {
-        printf("%d. ", numero);
-        struct char_array* actual = nodo->recurso->nombre->inicio;
-        while (actual != NULL) {
-            putchar(actual->caracter);
-            actual = actual->siguiente;
-        }
-        printf(" - Cantidad disponible: %d\n", nodo->recurso->cantidad);
-        nodo = nodo->siguiente;
-        numero++;
-    }
-    return 1;
-}
+
 	 
 	 
 

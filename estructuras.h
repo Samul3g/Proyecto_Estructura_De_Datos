@@ -208,7 +208,15 @@ void imprimir_lista_comunas(struct lista_comunas* lista_comunas);
 	/* Imprime la lista circular de comunas
 		Entrada: la lista circular
 		Salida: la lista circular impresa */
+		
 
+int imprimir_recurso(struct lista_recursos* lista);
+/*Funcion que imprime una lista de recursos
+ * Entradas: lista recursos
+ * Salidas: impresion en la consola y 0 en caso de fallo, 1 en caso de exito
+ */
+ 
+ 
 struct nodo_recurso* buscar_recurso(struct lista_recursos* lista_recursos, struct string* nombre);
 	/* Recorre la lista doble hasta encontrar un recurso por nombre
 		Entrada: la lista y el nombre a buscar
