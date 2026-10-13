@@ -58,12 +58,12 @@ Después de la sociedad, de los índices guardados y de `manejo_recursos`.
 
 ### main.c
 
-- [ ] `main` acepta de 1 a 500 comunas. El archivo `comunas` tiene 50, así que el tope es 50.
+- [x] `main` acepta de 1 a 500 comunas. El archivo `comunas` tiene 50, así que el tope es 50.
   Hacerlo antes de que `main` llame a `generar_datos`.
 
 ### simulacion.c
 
-- [ ] `regalo_bien` y `regalo_servicio` siempre devuelven éxito, aunque la reducción o el aumento hayan fallado.
+- [x] `regalo_bien` y `regalo_servicio` siempre devuelven éxito, aunque la reducción o el aumento hayan fallado.
   Después de unir las firmas de `manejo_recursos.h` y `manejo_recursos.c`. Antes del intercambio del día.
 
 

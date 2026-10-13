@@ -6,9 +6,13 @@
     Salida: 1 (true/exito)
 */
 int regalo_bien(struct comuna* comuna_dar, struct comuna* comuna_recibir, char* bien, int cantidad){
-    reduccion_bien(bien, cantidad, comuna_dar);
-    aumento_bien(bien, cantidad, comuna_recibir);
-    return 1;
+    int reducir = reduccion_bien(bien, cantidad, comuna_dar);
+    int aumentar = aumento_bien(bien, cantidad, comuna_recibir);
+    
+    if(reducir == 1 && aumentar == 1){
+			return 1
+	}
+    return 0;
 }
 
 /* Funcion que realiza el regalo de un servicio entre dos comunas
@@ -16,9 +20,13 @@ int regalo_bien(struct comuna* comuna_dar, struct comuna* comuna_recibir, char* 
     Salida: 1 (true/exito)
 */
 int regalo_servicio(struct comuna* comuna_dar, struct comuna* comuna_recibir, char* servicio, int cantidad){
-    reduccion_servicio(servicio, cantidad, comuna_dar);
-    aumento_servicio(servicio, cantidad, comuna_recibir);
-    return 1;
+    int reduccion = reduccion_servicio(servicio, cantidad, comuna_dar);
+    int aumento = aumento_servicio(servicio, cantidad, comuna_recibir);
+    
+    if(reduccion == 1 && aumento == 1){
+		return 1;
+	}
+	return 0;
 }
 
 int emergencia(struct comuna* comuna){
