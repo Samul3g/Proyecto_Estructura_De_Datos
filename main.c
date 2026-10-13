@@ -37,6 +37,26 @@ void saludo_inicio(){
 	printf("\n\n                Estructuras de Datos, IIS 2026");
 }
 
+/* Funcion de impresion del logo y despedida
+ * Entradas: nada
+ * Salidas: nada (impresion en consola)
+ */
+void despedida(){
+	printf("\033[33m                      \\ | /");
+	printf("\033[33m\n                    --- ☀ ---");
+	printf("\033[33m\n                      / | \\");
+	printf("\033[32m\n\n             /\\        /\\        /\\");
+	printf("\033[32m\n            /  \\  /\\  /  \\  /\\  /  \\");
+	printf("\033[32m\n           /    \\/  \\/    \\/  \\/    \\");
+	printf("\033[32m\n          /______\\__ \\____/____\\_____\\");
+	printf("\033[0m\n            ╔═════════════════════╗");
+	printf("\n            ║ Por Samuel y Paula  ║");
+	printf("\n            ╚═════════╤═╤═════════╝");
+	printf("\n                     ╱ │ ╲");
+	printf("\n                    ╱  │  ╲");
+	printf("\n                 ──┴───┴───┴──");
+	printf("\n\nYa se acabo la simulacion, adios!!!")
+}
 
 
 /* Funcion que pide los valores de las comunas, bienes y servicios que el usuario pida y los coloca en variables globales
@@ -135,9 +155,8 @@ int main(){
 	while(turno <= 10){
 		printf("Turno %d\n", turno);
 		paso_dia(sociedad);
-		turno++;}
-
-	
-	
+		turno++;
+	}
+	despedida();
 }
 	
