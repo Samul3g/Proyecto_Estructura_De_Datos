@@ -130,12 +130,12 @@ En este orden: primero que la fórmula no llegue a 100, después las vecinas cua
 El programa no compila junto. Este orden: primero los tres archivos que no compilan, después el día en `main`, y al final lo que el intercambio deja a medias.
 
 
-- [ ] `main` crea la sociedad y retorna. No llama a `usuario_intercambio`, no recorre turnos y no libera la lista.
+- [X] `main` crea la sociedad y retorna. No llama a `usuario_intercambio`, no recorre turnos y no libera la lista.
   Después de que `main` compile. Antes del día y de la emergencia.
 
 ### main.c
 
-- [ ] Nadie llama a `calcular_necesidad` ni a `calcular_satisfaccion`. Al crear la sociedad esos campos quedan en 0. El consumo, la emergencia y `usuario_intercambio` cambian cantidades y no vuelven a escribir los índices. El enunciado pide calcularlos al armar la sociedad, modificarlos cada día y alterarlos con el intercambio.
+- [X] Nadie llama a `calcular_necesidad` ni a `calcular_satisfaccion`. Al crear la sociedad esos campos quedan en 0. El consumo, la emergencia y `usuario_intercambio` cambian cantidades y no vuelven a escribir los índices. El enunciado pide calcularlos al armar la sociedad, modificarlos cada día y alterarlos con el intercambio.
   Después de que esas funciones sí calculen y guarden. Junto con el recorrido de turnos, el día y la emergencia.
 
 - [ ] `imprimir_lista_comunas` solo imprime el nombre. La persona usuaria no ve necesidad, satisfacción ni inventario al pasar el día ni al elegir el regalo.
@@ -148,8 +148,8 @@ El programa no compila junto. Este orden: primero los tres archivos que no compi
 
 Después de la sociedad, de los índices guardados y de `manejo_recursos`.
 
-- [ ] El día: cada turno se consumen bienes, con una cantidad distinta en cada comuna.
-- [ ] La emergencia: cada ciertos turnos, en un rango aleatorio, baja bienes y servicios al azar y baja la satisfacción de las comunas cercanas. Cercanas son más de dos.
+- [X] El día: cada turno se consumen bienes, con una cantidad distinta en cada comuna.
+- [X] La emergencia: cada ciertos turnos, en un rango aleatorio, baja bienes y servicios al azar y baja la satisfacción de las comunas cercanas. Cercanas son más de dos.
   Después del consumo del día y de los índices guardados.
 
 
@@ -165,3 +165,5 @@ Después de la sociedad, de los índices guardados y de `manejo_recursos`.
 
 
 
+
+Pide al usuario un intercambios, se reducen los bienes y servicios, y se calcula una probabilidad de catastrofe o prosperidad, se calcula prosperidad de cada comuna. Imprimir comunas 

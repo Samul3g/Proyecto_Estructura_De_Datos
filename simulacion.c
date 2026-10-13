@@ -1,8 +1,69 @@
 #include "estructuras.h"
 #include "manejo_recursos.h"
+#include "indices.h"
 #include "utils.h"
 
 
+
+int paso_dia(struct lista_comunas* sociedad){
+    int valido = 0;
+    valido = usuario_intercambio(sociedad);
+    if(valido == 0){
+        printf("No se pudo realizar el intercambio\n");
+        return 0;
+    }
+    valido = reduccion_bienes_servicios(sociedad);
+    if(valido == 0){
+        printf("No se pudo reducir los bienes y servicios\n");
+        return 0;
+    }
+    evento = aleatorio(1, 10);
+    if(evento < 3){
+        printf("Evento: Emergencia\n");
+        valido = emergencia(sociedad);
+        if(valido == 0){
+            printf("No se pudo realizar el evento\n");
+            return 0;
+        }
+    }else if(evento < 8){
+        printf("Evento: Prosperidad\n");
+        valido = prosperidad(sociedad);
+        if(valido == 0){
+            printf("No se pudo realizar el evento\n");
+            return 0;
+        }
+    }else{
+        printf("Evento: Ninguno\n");
+    }
+
+    valido = calcular_indice_sociedad(sociedad);
+    if(valido == 0){
+        printf("No se pudo calcular el indice de la sociedad\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+int calcular_indice_sociedad(struct lista_comunas* sociedad){
+    struct nodo_lista_comunas* actual = sociedad->inicio;
+    while(actual != NULL){
+        calcular_necesidad(actual->comuna);
+        calcular_satisfaccion(actual->comuna);
+        actual = actual->siguiente;
+    }
+    return 1;
+}
+
+int reduccion_bienes_servicios(struct lista_comunas* sociedad){
+    struct nodo_lista_comunas* actual = sociedad->inicio;
+    while(actual != NULL){
+        actual->comuna->bienes->cantidad = actual->comuna->bienes->cantidad  * 0.9;
+        actual->comuna->servicios->cantidad = actual->comuna->servicios->cantidad  * 0.9;
+        actual = actual->siguiente;
+    }
+    return 1;
+}
 
 int emergencia(struct comuna* comuna){
     int tipo = aleatorio(1, 2);
