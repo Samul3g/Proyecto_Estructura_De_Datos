@@ -329,6 +329,24 @@ struct lista_comunas* crear_lista_comunas() {
     return lista_comunas;
 }
 
+/*Funcion que imrpime una cadena de chars (strings)
+ * Entradas: inicio del arreglo de char
+ * Salida: Impresion en consola
+ */
+void imprimirString(struct string* texto){
+	struct char_array* actual = texto->inicio;
+	
+	while (actual != NULL) {
+            putchar(actual->caracter);
+            actual = actual->siguiente;
+        }
+	
+	}
+
+/* Imprime la lista circular de comunas
+ * Entrada: la lista circular
+ * Salida: la lista circular impresa 
+*/
 void imprimir_lista_comunas(struct lista_comunas* lista_comunas) { //imrpima los indices tambien TODO
     struct nodo_lista_comunas* nodo = lista_comunas->inicio;
     if (nodo == NULL) {
@@ -337,12 +355,8 @@ void imprimir_lista_comunas(struct lista_comunas* lista_comunas) { //imrpima los
     int i = 1;
     do {
 		printf("%d. ", i, ". ");
-        struct char_array* actual = nodo->comuna->nombre->inicio;
-        while (actual != NULL) {
-            putchar(actual->caracter);
-            actual = actual->siguiente;
-        }
-        putchar('\n');
+        imprimirString(nodo->comuna->nombre);
+        printf(". Indice de necesidad: %f. Indice de satisfaccion: %f\n", nodo->comuna->necesidad, nodo->comuna->satisfaccion);
         nodo = nodo->siguiente;
         i++;
     } while (nodo != lista_comunas->inicio);
@@ -353,26 +367,21 @@ void imprimir_lista_comunas(struct lista_comunas* lista_comunas) { //imrpima los
  * Entradas: lista recursos
  * Salidas: impresion en la consola y 0 en caso de fallo, 1 en caso de exito
  */
- int imprimir_recurso(struct lista_recursos* lista){
+ void imprimir_recurso(struct lista_recursos* lista){
 	if(lista == NULL){
-			return 0;
+			return;
 	}
 	
 	struct nodo_lista_recursos* nodo = lista->inicio;
 	int numero = 1;
 	 
     while (nodo != NULL) {
-        printf("%d. ", numero);
-        struct char_array* actual = nodo->recurso->nombre->inicio;
-        while (actual != NULL) {
-            putchar(actual->caracter);
-            actual = actual->siguiente;
-        }
+        printf("%d. ", numero, ". ");
+        imprimirString(nodo->recurso->nombre)
         printf(" - Cantidad disponible: %d\n", nodo->recurso->cantidad);
         nodo = nodo->siguiente;
         numero++;
     }
-    return 1;
 }
 
 

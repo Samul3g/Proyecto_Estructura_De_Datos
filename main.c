@@ -136,7 +136,7 @@ int main(){
 		printf("Turno %d\n", turno);
 		paso_dia(sociedad);
 		turno++;
-	}
+
 	
 	
 }

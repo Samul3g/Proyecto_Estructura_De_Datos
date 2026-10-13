@@ -20,7 +20,7 @@ float denominador;
  * recurso en la comuna
  * Entrada: nodo lista recurso
  * Salida: float entre 1 y 0 
- * Significado del resultado: 0 si no hay nada, 1 si esta lleno
+ * Significado del resultado: 1 si no hay nada, 0 si esta lleno
  */
 float carencia(struct nodo_lista_recursos* nodo){
 	struct nodo_recurso* recurso = nodo->recurso;
@@ -46,12 +46,12 @@ float carencia(struct nodo_lista_recursos* nodo){
 /*Funcion que va calculando las sumatorias del numerador y denomunador
  * de la formula que calcula el indice.
  * Entradas: lista, numerador y denominador
- * Salidas: ninguna
+ * Salidas: 0 (fallo), 1 (exito)
  */
 float sumatoria_recursos(struct lista_recursos* lista){
 	
 	if(lista == NULL){
-			return -1;
+			return 0;
 	}
 	
 	struct nodo_lista_recursos* actual = lista->inicio;
@@ -67,13 +67,13 @@ float sumatoria_recursos(struct lista_recursos* lista){
 		actual = actual->siguiente;
 		
 	}
-	return 0;
+	return 1;
 	
 }
 
  
 /*Funcion que calcula el indice de necesidad de una comuna.
- *Usa la siguiente formula: necesidad = base + (100 − base) × Σ (necesidad * importancia * carencia) / Σ importancia
+ *Usa la siguiente formula: necesidad = base + (95 − base) × Σ (necesidad * importancia * carencia) / Σ importancia
  *base = numero minimo al que llega el indice
  *Necesidad puede ser 1 o 0, dependiendo si es true o false, el recurso solo se toma en cuenta en el 
  *numerador si es true. En el denominador se toman en cuenta todos asi sean una necesidad o no.
@@ -83,15 +83,19 @@ float sumatoria_recursos(struct lista_recursos* lista){
  *Salidas: indice de necesidad (float)
  */	
 float calcular_necesidad(struct comuna* comuna){
+	if(comuna == NULL){
+		return -1;
+	}
 	
 	numerador = 0;
 	denominador = 0;
+	float resultado = 0;
 	float base = 5.0;
 	
 	sumatoria_recursos(comuna->bienes);
 	sumatoria_recursos(comuna->servicios);
 		
-	 if (denominador == 0) {
+	 if (denominador != 0) {
         float promedio = numerador / denominador;   // entre 0 y 1
 		resultado = base + (95.0 - base) * promedio;
     }
@@ -108,31 +112,38 @@ float calcular_necesidad(struct comuna* comuna){
  *Salidas: indice de satisfaccion (float)
  */
 float calcular_satisfaccion(struct nodo_lista_comunas* nodo_lista_comunas){
-	struct nodo_lista_comunas comunas_tomar_cuenta[5] = {
-		nodo_lista_comunas;
-
-		struct nodo_lista_comunas* comuna_anterior = nodo_lista_comunas->anterior;
-		struct nodo_lista_comunas* comuna_anterior2 = nodo_lista_comunas->anterior->anterior;
-		
-		struct nodo_lista_comunas* comuna_siguiente = nodo_lista_comunas->siguiente;
-		struct nodo_lista_comunas* comuna_siguiente2 = nodo_lista_comunas->siguiente->siguiente;
-	}
 	
-	// ciclos for que comparan verifican que no se repitan comunas, y si se repiten, ignora las veces repetidad
+	if(nodo_lista_comunas == NULL){
+		return -1;
+	}
+
+
+	struct nodo_lista_comunas* comunas_tomar_cuenta[5] = {
+		nodo_lista_comunas,
+
+		nodo_lista_comunas->anterior,
+		nodo_lista_comunas->anterior->anterior,
+		
+		nodo_lista_comunas->siguiente,
+		nodo_lista_comunas->siguiente->siguiente
+	};
+	
+	/*Ciclos for que comparan verifican que no se repitan comunas (porque es una lista circular pequena), 
+	 *y si se repiten, ignora las veces repetidas*/
+	float suma = 0;
+	int contadas = 0;
+	
 	for (int i = 0; i < 5; i++) {
 		int repetida = 0;
 		for (int j = 0; j < i; j++) {
-			if (candidatos[j] == candidatos[i]) {
+			if (comunas_tomar_cuenta[j] == comunas_tomar_cuenta[i]) {
 				repetida = 1;
 				break;
 			}
 		}
 		
 		if (!repetida) {
-			suma += candidatos[i]->comuna->necesidad;
-				if(comuna->necesidad == 0.0){
-						return 0;
-					}
+			suma += comunas_tomar_cuenta[i]->comuna->necesidad;
 			contadas++;
 		}
 	}
@@ -143,13 +154,3 @@ float calcular_satisfaccion(struct nodo_lista_comunas* nodo_lista_comunas){
 	nodo_lista_comunas->comuna->satisfaccion = resultado;
 	return resultado;
 	}
-
-
-
-	
-
-	
-	
-	
-	
-	
