@@ -35,7 +35,7 @@ Antes de que `main` arme la sociedad.
 
 ### simulacion.c
 
-- [ ] Una subida de bienes y servicios del mismo estilo que la emergencia. En la guía se llamó prosperidad. El enunciado pide que los valores suban con los intercambios.
+- [X] Una subida de bienes y servicios del mismo estilo que la emergencia. En la guía se llamó prosperidad. El enunciado pide que los valores suban con los intercambios.
   Después de la emergencia.
 
 ### simulacion.c
