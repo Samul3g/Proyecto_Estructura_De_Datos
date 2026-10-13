@@ -160,5 +160,9 @@ struct lista_comunas* generar_datos(int cantidad_comunas, int cantidad_servicios
 
     agregar_recursos_comunas(lista_comunas, lista_archivo_bienes, lista_archivo_servicios, lista_archivo_personas, cantidad_bienes, cantidad_servicios, cantidad_personas);
 
+    liberar_lista_archivo(lista_archivo_comunas);
+    liberar_lista_archivo(lista_archivo_bienes);
+    liberar_lista_archivo(lista_archivo_servicios);
+    liberar_lista_archivo(lista_archivo_personas);
     return lista_comunas;
 }

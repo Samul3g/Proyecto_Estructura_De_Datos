@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include "estructuras.h"
+
 extern int cantidad_comunas;
 extern int bienes;
 extern int servicios;

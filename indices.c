@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "estructuras.h"
+#include "indices.h"
 
 
 /*Los índices de necesidad y satisfacción como flotantes, con una fórmula propia. 

@@ -4,6 +4,7 @@
 #include "estructuras.h"
 #include "manejo_recursos.h"
 #include "generacion_datos.h"
+#include "indices.h"
 
 	//Variables globales
 	int cantidad_comunas = 0;
@@ -317,7 +318,7 @@ int usuario_intercambio(struct lista_comunas* lista_comunas){
 /*Funcion principal de toda la simulacion*/
 int main(){
 	configuracion_inicial();
-	struct lista_comunas* generar_datos = generar_datos(cantidad_comunas, servicios, bienes, personas);
+	struct lista_comunas* datos = generar_datos(cantidad_comunas, servicios, bienes, personas);
 	
 	
 	return 0;
