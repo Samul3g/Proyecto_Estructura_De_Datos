@@ -91,12 +91,13 @@ float calcular_necesidad(struct comuna* comuna){
 	sumatoria_recursos(comuna->servicios);
 		
 	 if (denominador == 0) {
-        return base;         // sin recursos o todos con importancia 0
+        float promedio = numerador / denominador;   // entre 0 y 1
+		resultado = base + (95.0 - base) * promedio;
     }
 
 
-    float promedio = numerador / denominador;   // entre 0 y 1
-    return base + (100 - base) * promedio;
+    comuna->necesidad = resultado;
+	return resultado;
     
 }
 
@@ -106,26 +107,40 @@ float calcular_necesidad(struct comuna* comuna){
  *Salidas: indice de satisfaccion (float)
  */
 float calcular_satisfaccion(struct nodo_lista_comunas* nodo_lista_comunas){
-	struct nodo_lista_comunas* comuna_anterior = nodo_lista_comunas->anterior;
-	struct nodo_lista_comunas* comuna_anterior2 = nodo_lista_comunas->anterior->anterior;
+	struct nodo_lista_comunas comunas_tomar_cuenta[5] = {
+		nodo_lista_comunas;
+
+		struct nodo_lista_comunas* comuna_anterior = nodo_lista_comunas->anterior;
+		struct nodo_lista_comunas* comuna_anterior2 = nodo_lista_comunas->anterior->anterior;
+		
+		struct nodo_lista_comunas* comuna_siguiente = nodo_lista_comunas->siguiente;
+		struct nodo_lista_comunas* comuna_siguiente2 = nodo_lista_comunas->siguiente->siguiente;
+	}
 	
-	
-	struct nodo_lista_comunas* comuna_siguiente = nodo_lista_comunas->siguiente;
-	struct nodo_lista_comunas* comuna_siguiente2 = nodo_lista_comunas->siguiente->siguiente;
-	
-	float necesidad_ant = comuna_anterior->comuna->necesidad;
-	float necesidad_ant2 = comuna_anterior2->comuna->necesidad;
-	
-	float necesidad_sig = comuna_siguiente->comuna->necesidad;
-	float necesidad_sig2 = comuna_siguiente2->comuna->necesidad;
-	
-	float necesidad_propia = nodo_lista_comunas->comuna->necesidad;
-	
-	float promedio = (necesidad_ant + necesidad_ant2 + necesidad_sig + necesidad_sig2 + necesidad_propia) / 5;
-	
-	return 100.00 - promedio;
-	
-	
+	// ciclos for que comparan verifican que no se repitan comunas, y si se repiten, ignora las veces repetidad
+	for (int i = 0; i < 5; i++) {
+		int repetida = 0;
+		for (int j = 0; j < i; j++) {
+			if (candidatos[j] == candidatos[i]) {
+				repetida = 1;
+				break;
+			}
+		}
+		
+		if (!repetida) {
+			suma += candidatos[i]->comuna->necesidad;
+				if(comuna->necesidad == 0.0){
+						return 0;
+					}
+			contadas++;
+		}
+	}
+
+	float promedio = suma / contadas;
+	float resultado = 100.0 - promedio;
+
+	nodo_lista_comunas->comuna->satisfaccion = resultado;
+	return resultado;
 	}
 
 

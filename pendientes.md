@@ -69,23 +69,23 @@ Después de la sociedad, de los índices guardados y de `manejo_recursos`.
 
 ### main.c
 
-- [ ] Crear la sociedad con los números que pidió la persona usuaria. `main` guarda comunas, bienes, servicios y personas, y no llama a `generar_datos`.
+- [x] Crear la sociedad con los números que pidió la persona usuaria. `main` guarda comunas, bienes, servicios y personas, y no llama a `generar_datos`.
   Después del tope de 50 comunas y de los arreglos de `generacion_datos.c`.
 
 ### indices.c
 
 En este orden: primero que la fórmula no llegue a 100, después las vecinas cuando hay pocas comunas, y al final guardar los dos números. Al guardarlos se arregla que la satisfacción lea una necesidad que sigue en 0.
 
-- [ ] `calcular_necesidad` puede devolver 100. Si todos los recursos activos son necesidad y están vacíos, el promedio vale 1 y la fórmula da `5 + 95 * 1`. El enunciado dice que la necesidad nunca llega al máximo.
-- [ ] Con menos de 5 comunas el círculo se pisa: la misma vecina entra dos veces en el promedio.
-- [ ] Guardar los índices. `calcular_necesidad` y `calcular_satisfaccion` devuelven el número y no lo escriben en la comuna.
-- [ ] La satisfacción lee `comuna->necesidad`. Si nadie guardó ese campo antes, el promedio es 0 y la satisfacción sale 100.
+- [x] `calcular_necesidad` puede devolver 100. Si todos los recursos activos son necesidad y están vacíos, el promedio vale 1 y la fórmula da `5 + 95 * 1`. El enunciado dice que la necesidad nunca llega al máximo.
+- [x] Con menos de 5 comunas el círculo se pisa: la misma vecina entra dos veces en el promedio.
+- [x] Guardar los índices. `calcular_necesidad` y `calcular_satisfaccion` devuelven el número y no lo escriben en la comuna.
+- [x] La satisfacción lee `comuna->necesidad`. Si nadie guardó ese campo antes, el promedio es 0 y la satisfacción sale 100.
 
 
 
 ### main.c
 
-- [ ] El intercambio durante el día: la persona usuaria elige qué pasa de una comuna a otra, y eso cambia los índices.
+- [x] El intercambio durante el día: la persona usuaria elige qué pasa de una comuna a otra, y eso cambia los índices.
   Después del regalo que avisa si falló, de que el aumento agregue un recurso que la comuna no tenía, y de los índices guardados.
 
 ## Sin asignar
