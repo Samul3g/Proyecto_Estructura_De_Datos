@@ -38,13 +38,6 @@ Antes de que `main` arme la sociedad.
 - [X] Una subida de bienes y servicios del mismo estilo que la emergencia. En la guía se llamó prosperidad. El enunciado pide que los valores suban con los intercambios.
   Después de la emergencia.
 
-### simulacion.c
-
-Después de la sociedad, de los índices guardados y de `manejo_recursos`.
-
-- [ ] El día: cada turno se consumen bienes, con una cantidad distinta en cada comuna.
-- [ ] La emergencia: cada ciertos turnos, en un rango aleatorio, baja bienes y servicios al azar y baja la satisfacción de las comunas cercanas. Cercanas son más de dos.
-  Después del consumo del día y de los índices guardados.
 
 ### simulacion.c
 
@@ -116,6 +109,14 @@ En este orden: primero que la fórmula no llegue a 100, después las vecinas cua
 - [x] El intercambio durante el día: la persona usuaria elige qué pasa de una comuna a otra, y eso cambia los índices.
   Después del regalo que avisa si falló, de que el aumento agregue un recurso que la comuna no tenía, y de los índices guardados.
 
+
+
+
+
+
+
+
+
 ### indices.c
 
 - [x] No hay `indices.h`. Aunque el archivo compile, `main` no tiene dónde declarar estas funciones.
@@ -143,6 +144,13 @@ El programa no compila junto. Este orden: primero los tres archivos que no compi
 - [ ] Cuando `main` recorra turnos, no hay tope ni salida: no se pide cuántos días ni hay forma de terminar la simulación.
   Junto con el recorrido de turnos.
 
+### simulacion.c
+
+Después de la sociedad, de los índices guardados y de `manejo_recursos`.
+
+- [ ] El día: cada turno se consumen bienes, con una cantidad distinta en cada comuna.
+- [ ] La emergencia: cada ciertos turnos, en un rango aleatorio, baja bienes y servicios al azar y baja la satisfacción de las comunas cercanas. Cercanas son más de dos.
+  Después del consumo del día y de los índices guardados.
 
 
 
