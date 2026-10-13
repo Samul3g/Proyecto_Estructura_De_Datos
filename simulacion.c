@@ -183,6 +183,7 @@ int prosperidad(struct comuna* comuna){
 
     if(actual->recurso->cantidad == 0){
         actual->recurso->cantidad = 1;
+        return 1;
     }
 	int sube = aleatorio(1, actual->recurso->cantidad);
 	actual->recurso->cantidad = actual->recurso->cantidad + sube;

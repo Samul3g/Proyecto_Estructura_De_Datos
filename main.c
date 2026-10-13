@@ -135,7 +135,7 @@ int main(){
 	while(turno <= 10){
 		printf("Turno %d\n", turno);
 		paso_dia(sociedad);
-		turno++;
+		turno++;}
 
 	
 	

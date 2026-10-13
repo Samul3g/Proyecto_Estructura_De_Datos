@@ -25,7 +25,7 @@ void configuracion_inicial();
  * Entradas: lista recursos
  * Salidas: impresion en la consola y 0 en caso de fallo, 1 en caso de exito
  */
- int imprimir_recurso(struct lista_recursos* lista);
+ void imprimir_recurso(struct lista_recursos* lista);
 	 
 	 
 /*Funcion que pide al usuario la comuna que regala y recibe y el servicio o bien a regalar y luego da el regalo

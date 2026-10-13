@@ -354,7 +354,7 @@ void imprimir_lista_comunas(struct lista_comunas* lista_comunas) { //imrpima los
     }
     int i = 1;
     do {
-		printf("%d. ", i, ". ");
+		printf("%d. ", i);
         imprimirString(nodo->comuna->nombre);
         printf(". Indice de necesidad: %f. Indice de satisfaccion: %f\n", nodo->comuna->necesidad, nodo->comuna->satisfaccion);
         nodo = nodo->siguiente;
@@ -376,8 +376,8 @@ void imprimir_lista_comunas(struct lista_comunas* lista_comunas) { //imrpima los
 	int numero = 1;
 	 
     while (nodo != NULL) {
-        printf("%d. ", numero, ". ");
-        imprimirString(nodo->recurso->nombre)
+        printf("%d. ", numero);
+        imprimirString(nodo->recurso->nombre);
         printf(" - Cantidad disponible: %d\n", nodo->recurso->cantidad);
         nodo = nodo->siguiente;
         numero++;
