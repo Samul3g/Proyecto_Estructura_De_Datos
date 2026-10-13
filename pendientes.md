@@ -24,7 +24,8 @@ Antes de que `main` arme la sociedad.
 
 - [X] En `generar_lista_recursos`, una variable local llamada `cantidad` tapa el parámetro del mismo nombre.
 - [X] El nombre de la comuna es el mismo `struct string*` de la lista leída del archivo, sin copia. Si esa lista se libera, la comuna queda apuntando a memoria libre.
-<Baja Peoridad, ignorar por el momento>
+Baja prioridad, ignorar por el momento. El lector está en `crear_recurso_desde_linea` de `utils.c`.
+
 - [ ] Si una línea de `bienes` o `servicios` no trae las comas esperadas, el lector usa un puntero nulo y el programa se cae.
 
 
@@ -44,6 +45,8 @@ Antes de que `main` arme la sociedad.
 - [X] `regalo_bien` y `regalo_servicio` siguen recibiendo `char*`. `manejo_recursos` pide `struct string*`, y a `return 1` de `regalo_bien` le falta el punto y coma. `usuario_intercambio` no las usa: aumenta y después reduce por su cuenta.
 - [X] `emergencia` y `prosperidad` eligen un nodo si hay más de uno. Con un solo recurso, `i` queda en el largo, el recorrido se sale y no cambia la cantidad. Si la cantidad del nodo elegido ya es 0, `aleatorio(1, cantidad)` divide por cero y el programa se cae.
   Arreglar el archivo antes del día y de la emergencia de Samuel. La prosperidad está marcada hecha arriba, pero esta función es otro borrador.
+- [x] El paso del día pide un intercambio, reduce los bienes y los servicios de cada comuna, y sortea emergencia o prosperidad en una sola comuna.
+  La catástrofe en una comuna es el comportamiento pedido.
 
 ### manejo_recursos.c
 
@@ -149,8 +152,11 @@ El programa no compila junto. Este orden: primero los tres archivos que no compi
 Después de la sociedad, de los índices guardados y de `manejo_recursos`.
 
 - [X] El día: cada turno se consumen bienes, con una cantidad distinta en cada comuna.
-- [X] La emergencia: cada ciertos turnos, en un rango aleatorio, baja bienes y servicios al azar y baja la satisfacción de las comunas cercanas. Cercanas son más de dos.
-  Después del consumo del día y de los índices guardados.
+- [X] La emergencia: cada ciertos turnos, en un rango aleatorio, baja un bien o un servicio al azar en una comuna.
+  El sorteo y la baja del recurso están en `simulacion.c`.
+
+- [ ] Cuando hay emergencia, baja la satisfacción de las comunas cercanas. Cercanas son más de dos.
+  Después de que `calcular_satisfaccion` guarde el índice.
 
 
 
@@ -162,8 +168,4 @@ Después de la sociedad, de los índices guardados y de `manejo_recursos`.
 
 ## Sin asignar
 
-
-
-
-
-Pide al usuario un intercambios, se reducen los bienes y servicios, y se calcula una probabilidad de catastrofe o prosperidad, se calcula prosperidad de cada comuna. Imprimir comunas 
+Nada. El paso del día quedó con Samuel. Imprimir necesidad, satisfacción e inventario quedó con Paula. 

@@ -2,35 +2,50 @@
 #include "manejo_recursos.h"
 #include "indices.h"
 #include "utils.h"
+#include "simulacion.h"
 
 
+/* Funcion que devuelve una comuna aleatoria de la lista de comunas
+	Entrada: sociedad
+	Salida: comuna
+*/
+struct comuna* comuna_random(struct lista_comunas* sociedad){
+    int largo = largo_comuna(sociedad);
+    int comuna = aleatorio(1, largo);
+    struct nodo_lista_comunas* actual = sociedad->inicio;
+    while(comuna > 1){
+        actual = actual->siguiente;
+        comuna--;
+    }
+    return actual->comuna;
+}
 
+/* Funcion que realiza un paso de dia en la simulacion
+	Entrada: sociedad
+	Salida: 1 (true/exito)
+*/
 int paso_dia(struct lista_comunas* sociedad){
     int valido = 0;
     valido = usuario_intercambio(sociedad);
     if(valido == 0){
         printf("No se pudo realizar el intercambio\n");
-        return 0;
     }
     valido = reduccion_bienes_servicios(sociedad);
     if(valido == 0){
         printf("No se pudo reducir los bienes y servicios\n");
-        return 0;
     }
-    evento = aleatorio(1, 10);
+    int evento = aleatorio(1, 10);
     if(evento < 3){
         printf("Evento: Emergencia\n");
-        valido = emergencia(sociedad);
+        valido = emergencia(comuna_random(sociedad));
         if(valido == 0){
             printf("No se pudo realizar el evento\n");
-            return 0;
         }
     }else if(evento < 8){
         printf("Evento: Prosperidad\n");
-        valido = prosperidad(sociedad);
+        valido = prosperidad(comuna_random(sociedad));
         if(valido == 0){
             printf("No se pudo realizar el evento\n");
-            return 0;
         }
     }else{
         printf("Evento: Ninguno\n");
@@ -39,136 +54,142 @@ int paso_dia(struct lista_comunas* sociedad){
     valido = calcular_indice_sociedad(sociedad);
     if(valido == 0){
         printf("No se pudo calcular el indice de la sociedad\n");
-        return 0;
     }
 
     return 1;
 }
 
+/* Funcion que calcula el indice de la sociedad
+	Entrada: sociedad
+	Salida: 1 (true/exito)
+*/
 int calcular_indice_sociedad(struct lista_comunas* sociedad){
     struct nodo_lista_comunas* actual = sociedad->inicio;
-    while(actual != NULL){
+    struct nodo_lista_comunas* inicio = sociedad->inicio;
+
+    calcular_necesidad(actual->comuna);
+    calcular_satisfaccion(actual);
+    actual = actual->siguiente;
+
+    while(actual != inicio){
         calcular_necesidad(actual->comuna);
-        calcular_satisfaccion(actual->comuna);
+        calcular_satisfaccion(actual);
         actual = actual->siguiente;
     }
     return 1;
 }
 
+/* Funcion que reduce la cantidad de bienes y servicios en una comuna
+	Entrada: sociedad
+	Salida: 1 (true/exito)
+*/
 int reduccion_bienes_servicios(struct lista_comunas* sociedad){
-    struct nodo_lista_comunas* actual = sociedad->inicio;
-    while(actual != NULL){
-        actual->comuna->bienes->cantidad = actual->comuna->bienes->cantidad  * 0.9;
-        actual->comuna->servicios->cantidad = actual->comuna->servicios->cantidad  * 0.9;
+    struct nodo_lista_comunas* inicio = sociedad->inicio;
+    struct nodo_lista_comunas* actual = inicio;
+
+    struct nodo_lista_recursos* bienes = actual->comuna->bienes->inicio;
+    struct nodo_lista_recursos* servicios = actual->comuna->servicios->inicio;
+
+    int largo_bienes = largo_recurso(actual->comuna->bienes);
+    int largo_servicios = largo_recurso(actual->comuna->servicios);
+    int i = 0;
+    while(i < largo_bienes){
+        bienes->recurso->cantidad = bienes->recurso->cantidad  * 0.9;
+        bienes = bienes->siguiente;
+        i++;
+    }
+
+    i = 0;
+    while(i < largo_servicios){
+        servicios->recurso->cantidad = servicios->recurso->cantidad  * 0.9;
+        servicios = servicios->siguiente;
+        i++;
+    }
+    actual = actual->siguiente;
+
+    while(actual != inicio){
+        bienes = actual->comuna->bienes->inicio;
+        servicios = actual->comuna->servicios->inicio;
+        largo_bienes = largo_recurso(actual->comuna->bienes);
+        largo_servicios = largo_recurso(actual->comuna->servicios);
+        i = 0;
+        while(i < largo_bienes){
+            bienes->recurso->cantidad = bienes->recurso->cantidad  * 0.9;
+            bienes = bienes->siguiente;
+            i++;
+        }
+        i = 0;
+        while(i < largo_servicios){
+            servicios->recurso->cantidad = servicios->recurso->cantidad  * 0.9;
+            servicios = servicios->siguiente;
+            i++;
+        }
         actual = actual->siguiente;
     }
     return 1;
 }
 
-int emergencia(struct comuna* comuna){
-    int tipo = aleatorio(1, 2);
-    int i = 0;
-    if(tipo == 1){
-        struct nodo_lista_recursos* actual = comuna->bienes->inicio;
-        int largo = largo_recurso(comuna->bienes);
-        if(largo <= 1){
-            i = largo;
-        }else{
-        i = aleatorio(0, largo - 1);}
-        while(i > 0){
-            actual = actual->siguiente;
-            i--;
-        }
-        if(actual == NULL){
-            return 0;
-        }
+/* Elige un bien o un servicio al azar de la comuna
+	Entrada: comuna
+	Salida: el nodo elegido, o NULL si esa lista esta vacia
+*/
+struct nodo_lista_recursos* recurso_aleatorio(struct comuna* comuna){
+	int tipo = aleatorio(1, 2);
+	struct lista_recursos* lista;
+	if(tipo == 1){
+		lista = comuna->bienes;
+	}else{
+		lista = comuna->servicios;
+	}
 
-        if (actual -> recurso -> cantidad == 0){
-            return 0;
-        }
-        actual -> recurso -> cantidad = actual -> recurso -> cantidad - aleatorio(1, actual -> recurso -> cantidad);
-        if (actual -> recurso -> cantidad < 0){
-            actual -> recurso -> cantidad = 0;
-        }
-        return 1;
-    }else{
-        struct nodo_lista_recursos* actual = comuna->servicios->inicio;
-        int largo = largo_recurso(comuna->servicios);
-        if(largo <= 1){
-            i = largo;
-        }else{
-        i = aleatorio(0, largo - 1);}
-        while(i > 0){
-            actual = actual->siguiente;
-            i--;
-        }
-        if(actual == NULL){
-            return 0;
-        }
+	int largo = largo_recurso(lista);
+	if(largo == 0){
+		return NULL;
+	}
 
-        if (actual -> recurso -> cantidad == 0){
-            return 0;
-        }
-        actual -> recurso -> cantidad = actual -> recurso -> cantidad - aleatorio(1, actual -> recurso -> cantidad);
-        if (actual -> recurso -> cantidad < 0){
-            actual -> recurso -> cantidad = 0;
-        }
-        return 1;
-    } return 0;
+	int i = aleatorio(0, largo - 1);
+	struct nodo_lista_recursos* actual = lista->inicio;
+	while(i > 0){
+		actual = actual->siguiente;
+		i--;
+	}
+	return actual;
 }
 
+/* Funcion que realiza la emergencia de un bien o un servicio en una comuna
+	Entrada: comuna
+	Salida: 1 (true/exito)
+*/
+int emergencia(struct comuna* comuna){
+	struct nodo_lista_recursos* actual = recurso_aleatorio(comuna);
+	if(actual == NULL || actual->recurso->cantidad == 0){
+		return 0;
+	}
+
+	int baja = aleatorio(1, actual->recurso->cantidad);
+	actual->recurso->cantidad = actual->recurso->cantidad - baja;
+	return 1;
+}
+
+/* Funcion que realiza la prosperidad de un bien o un servicio en una comuna
+	Entrada: comuna
+	Salida: 1 (true/exito)
+*/
 int prosperidad(struct comuna* comuna){
-    int tipo = aleatorio(1, 2);
-    int i = 0;
-    if(tipo == 1){
-        struct nodo_lista_recursos* actual = comuna->bienes->inicio;
-        int largo = largo_recurso(comuna->bienes);
-        if(largo <= 1){
-            i = largo;
-        }else{
-        i = aleatorio(0, largo - 1);}
-        while(i > 0){
-            actual = actual->siguiente;
-            i--;
-        }
-        if(actual == NULL){
-            return 0;
-        }
+	struct nodo_lista_recursos* actual = recurso_aleatorio(comuna);
+	if(actual == NULL){
+		return 0;
+	}
 
-        if (actual -> recurso -> cantidad == 0){
-            return 0;
-        }
-        actual -> recurso -> cantidad = actual -> recurso -> cantidad + aleatorio(1, actual -> recurso -> cantidad);
-        if (actual -> recurso -> cantidad > actual -> recurso -> maximo){
-            actual -> recurso -> cantidad = actual -> recurso -> maximo;
-        }
-        return 1;
-    }else{
-        struct nodo_lista_recursos* actual = comuna->servicios->inicio;
-        int largo = largo_recurso(comuna->servicios);
-        if(largo <= 1){
-            i = largo;
-        }else{
-        i = aleatorio(0, largo - 1);}
-
-        while(i > 0){
-            actual = actual->siguiente;
-            i--;
-        }
-        if(actual == NULL){
-            return 0;
-        }
-
-        if (actual -> recurso -> cantidad == 0){
-            return 0;
-        }
-        actual -> recurso -> cantidad = actual -> recurso -> cantidad + aleatorio(1, actual -> recurso -> cantidad);
-        if (actual -> recurso -> cantidad > actual -> recurso -> maximo){
-            actual -> recurso -> cantidad = actual -> recurso -> maximo;
-        }
-
-        return 1;
-    } return 0;
+    if(actual->recurso->cantidad == 0){
+        actual->recurso->cantidad = 1;
+    }
+	int sube = aleatorio(1, actual->recurso->cantidad);
+	actual->recurso->cantidad = actual->recurso->cantidad + sube;
+	if(actual->recurso->cantidad > actual->recurso->maximo){
+		actual->recurso->cantidad = actual->recurso->maximo;
+	}
+	return 1;
 }
 
 

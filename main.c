@@ -5,6 +5,7 @@
 #include "manejo_recursos.h"
 #include "generacion_datos.h"
 #include "indices.h"
+#include "simulacion.h"
 
 	//Variables globales
 	int cantidad_comunas = 0;
@@ -127,10 +128,16 @@ void configuracion_inicial(){
 int main(){
 	configuracion_inicial();
 	struct lista_comunas* sociedad = generar_datos(cantidad_comunas, servicios, bienes, personas);
+
+	calcular_indice_sociedad(sociedad);
 	
-	
-	
-	return 0;
-	
+	int turno = 1;
+	while(turno <= 10){
+		printf("Turno %d\n", turno);
+		paso_dia(sociedad);
+		turno++;
 	}
+	
+	
+}
 	
