@@ -15,6 +15,13 @@ extern int personas;
 void saludo_inicio();
 
 
+/* Funcion de impresion del logo y despedida
+ * Entradas: nada
+ * Salidas: nada (impresion en consola)
+ */
+void despedida();
+
+
 /* Funcion que pide los valores de las comunas, bienes y servicios que el usuario pida y los coloca en variables globales
  * Entradas: nada
  * Salidas: ninguna*/

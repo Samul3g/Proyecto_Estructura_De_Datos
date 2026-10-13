@@ -352,11 +352,13 @@ void imprimir_lista_comunas(struct lista_comunas* lista_comunas) { //imrpima los
     if (nodo == NULL) {
         return;
     }
+    printf("\033[33m  Comunas\033[0m\n");
+    printf("\033[33m  ────────────────────────────────────────\033[0m\n");
     int i = 1;
     do {
-		printf("%d. ", i);
+		printf("  \033[33m┌\033[0m \033[1m%d\033[0m  ", i);
         imprimirString(nodo->comuna->nombre);
-        printf(". Indice de necesidad: %f. Indice de satisfaccion: %f\n", nodo->comuna->necesidad, nodo->comuna->satisfaccion);
+        printf("\n  \033[33m│\033[0m \033[33mnecesidad\033[0m %.1f    \033[32msatisfaccion\033[0m %.1f\n", nodo->comuna->necesidad, nodo->comuna->satisfaccion);
         nodo = nodo->siguiente;
         i++;
     } while (nodo != lista_comunas->inicio);
@@ -372,13 +374,20 @@ void imprimir_lista_comunas(struct lista_comunas* lista_comunas) { //imrpima los
 			return;
 	}
 	
+	printf("\n\033[33m  Inventario\033[0m\n");
+	printf("\033[33m  ────────────────────────────────────────\033[0m\n");
+
 	struct nodo_lista_recursos* nodo = lista->inicio;
 	int numero = 1;
-	 
+
     while (nodo != NULL) {
-        printf("%d. ", numero);
+        printf("  \033[33m┌\033[0m \033[1m%d\033[0m  ", numero);
         imprimirString(nodo->recurso->nombre);
-        printf(" - Cantidad disponible: %d\n", nodo->recurso->cantidad);
+        if(nodo->recurso->cantidad == 0){
+            printf("\n  \033[33m│\033[0m \033[31mdisponible  0\033[0m\n");
+        }else{
+            printf("\n  \033[33m│\033[0m \033[32mdisponible  %d\033[0m\n", nodo->recurso->cantidad);
+        }
         nodo = nodo->siguiente;
         numero++;
     }

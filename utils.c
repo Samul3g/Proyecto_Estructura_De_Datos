@@ -33,6 +33,26 @@ int aleatorio(int minimo, int maximo) {
 	return numero_aleatorio;
 }
 
+/* Lee un entero de la entrada. Si no es un numero, descarta el resto de la linea.
+	Entrada: donde guardar el entero
+	Salida: 1 si leyo un numero, 0 si no era un numero, -1 si se acabo la entrada */
+int leer_entero(int* destino) {
+	int leido = scanf("%d", destino);
+	if (leido == EOF) {
+		return -1;
+	}
+
+	int c = getchar();
+	while (c != '\n' && c != EOF) {
+		c = getchar();
+	}
+
+	if (leido != 1) {
+		return 0;
+	}
+	return 1;
+}
+
 /* Obtiene el siguiente caracter del archivo
 	Entrada: el archivo
 	Salida: el siguiente caracter del archivo */
@@ -61,11 +81,11 @@ struct string* linea_archivo(FILE* archivo) {
 		}
 		c = siguiente_caracter(archivo);
 	}
-	if (c == EOF) {
+	if (c == EOF && linea->inicio == NULL) {
+		liberar_string(linea);
 		return NULL;
-	} else {
-		return linea;
 	}
+	return linea;
 }
 
 /* Genera la lista de archivos a partir de un archivo de lectura
@@ -93,7 +113,7 @@ struct lista_archivo* generar_lista_archivo(FILE* archivo) {
 FILE* leer_archivo(char* nombre) {
 	FILE* archivo = fopen(nombre, "r");
 	if (archivo == NULL) {
-		printf("Error al abrir el archivo %s\n", nombre);
+		printf("\033[31mError al abrir el archivo %s\033[0m\n", nombre);
 		exit(1);
 	}
 	return archivo;

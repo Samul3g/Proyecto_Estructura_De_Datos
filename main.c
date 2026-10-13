@@ -6,6 +6,7 @@
 #include "generacion_datos.h"
 #include "indices.h"
 #include "simulacion.h"
+#include "utils.h"
 
 	//Variables globales
 	int cantidad_comunas = 0;
@@ -32,9 +33,9 @@ void saludo_inicio(){
 	printf("\n                     ╱ │ ╲");
 	printf("\n                    ╱  │  ╲");
 	printf("\n                 ──┴───┴───┴──");
-	printf("\n\n\nBienvenid@ a la simulacion: Una sociedad solarpunk de comunas anarquistas");
-	printf("\n\n      Hecho por: Paula Flores Solano y Samuel Ureña Gonzalez");
-	printf("\n\n                Estructuras de Datos, IIS 2026");
+	printf("\n\n\n\033[1;33mBienvenid@ a la simulacion:\033[0m Una sociedad solarpunk de comunas anarquistas");
+	printf("\n\n      \033[32mHecho por:\033[0m Paula Flores Solano y Samuel Ureña Gonzalez");
+	printf("\n\n                \033[2mEstructuras de Datos, IIS 2026\033[0m");
 }
 
 /* Funcion de impresion del logo y despedida
@@ -42,7 +43,7 @@ void saludo_inicio(){
  * Salidas: nada (impresion en consola)
  */
 void despedida(){
-	printf("\033[33m                      \\ | /");
+	printf("\n\033[33m                      \\ | /");
 	printf("\033[33m\n                    --- ☀ ---");
 	printf("\033[33m\n                      / | \\");
 	printf("\033[32m\n\n             /\\        /\\        /\\");
@@ -55,87 +56,44 @@ void despedida(){
 	printf("\n                     ╱ │ ╲");
 	printf("\n                    ╱  │  ╲");
 	printf("\n                 ──┴───┴───┴──");
-	printf("\n\nYa se acabo la simulacion, adios!!!")
+	printf("\n\n\033[1;33mYa se acabo la simulacion, adios!!!\033[0m\n\n");
 }
 
+
+/* Pide un entero dentro del rango. Si escriben texto, lo descarta y vuelve a preguntar.
+ * Entradas: la pregunta, el minimo y el maximo
+ * Salidas: el entero valido */
+int pedir_cantidad(const char* pregunta, int minimo, int maximo){
+	int valor = 0;
+	printf("%s", pregunta);
+	int estado = leer_entero(&valor);
+	while(estado <= 0 || valor < minimo || valor > maximo){
+		if(estado < 0){
+			exit(1);
+		}
+		printf("\033[31m  Valor invalido.\033[0m Tiene que estar en el rango.\n");
+		printf("%s", pregunta);
+		estado = leer_entero(&valor);
+	}
+	return valor;
+}
 
 /* Funcion que pide los valores de las comunas, bienes y servicios que el usuario pida y los coloca en variables globales
  * Entradas: nada
  * Salidas: ninguna*/
 void configuracion_inicial(){
 	saludo_inicio();
-	
-	int correcto = 0; // ayuda para hacer validaciones
-	
-	//variables locales
-	int cant_bienes = 0;
-	int cant_comunas = 0;
-	int cant_servicios = 0;
-	int cant_personas = 0;
-	
-	//pedir cantidad comunas
-	
-	printf("\n\nInserte la cantidad de comunas que quiere (entre 1 y 50): ");
-	scanf("%d", &cant_comunas);
-	
-	while(correcto == 0){
-		if(cant_comunas < 1 || cant_comunas > 50){
-			printf("\033[31m\nValor invalido.");
-			printf("\033[0m Inserte la cantidad de comunas que quiere (entre 1 y 50): ");
-			scanf("%d", &cant_comunas);
-		}else{
-			cantidad_comunas = cant_comunas;
-			correcto = 1;
-		}
-	}
-	
-	correcto = 0;
-	
-	//pedir cantidad bienes
-	printf("\n\nInserte la cantidad de bienes que quiere (entre 1 y 20): ");
-	scanf("%d", &cant_bienes);
-	while(correcto == 0){
-		if(cant_bienes < 1 || cant_bienes > 20){
-			printf("\033[31m\nValor invalido.");
-			printf("\033[0m Inserte la cantidad de bienes que quiere (entre 1 y 20): ");
-			scanf("%d", &cant_bienes);
-		}else{
-			bienes = cant_bienes;
-			correcto = 1;
-		}
-	}
-		
-	correcto = 0;
-		
-	//pedir cantidad servicios
-	printf("\n\nInserte la cantidad de servicios que quiere (entre 1 y 20): ");
-	scanf("%d", &cant_servicios);
-	while(correcto == 0){
-		if(cant_servicios < 1 || cant_servicios > 20){
-			printf("\033[31m\nValor invalido.");
-			printf("\033[0m Inserte la cantidad de servicios que quiere (entre 1 y 20): ");
-			scanf("%d", &cant_servicios);
-		}else{
-			servicios = cant_servicios;
-			correcto = 1;
-		}
-	}
 
-	correcto = 0;
-
-	//pedir cantidad personas
-	printf("\n\nInserte la cantidad de personas que quiere (entre 1 y 500): ");
-	scanf("%d", &cant_personas);
-	while(correcto == 0){
-		if(cant_personas < 1 || cant_personas > 500){
-			printf("\033[31m\nValor invalido.");
-			printf("\033[0m Inserte la cantidad de personas que quiere (entre 1 y 500): ");
-			scanf("%d", &cant_personas);
-		}else{
-			personas = cant_personas;
-			correcto = 1;
-		}
-	}
+	printf("\n\n\033[33m  ────────────────────────────────────────\033[0m\n");
+	printf("\033[1;33m   Configuracion\033[0m\n");
+	printf("\033[33m  ────────────────────────────────────────\033[0m\n\n");
+	cantidad_comunas = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de comunas que quiere \033[2m(entre 1 y 50)\033[0m: ", 1, 50);
+	printf("\n");
+	bienes = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de bienes que quiere \033[2m(entre 1 y 20)\033[0m: ", 1, 20);
+	printf("\n");
+	servicios = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de servicios que quiere \033[2m(entre 1 y 20)\033[0m: ", 1, 20);
+	printf("\n");
+	personas = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de personas que quiere \033[2m(entre 1 y 50)\033[0m: ", 1, 50);
 }
 
 
@@ -150,10 +108,14 @@ int main(){
 	struct lista_comunas* sociedad = generar_datos(cantidad_comunas, servicios, bienes, personas);
 
 	calcular_indice_sociedad(sociedad);
-	
+
+	printf("\n\033[32m  La sociedad ya esta lista.\033[0m\n");
+
 	int turno = 1;
 	while(turno <= 10){
-		printf("Turno %d\n", turno);
+		printf("\n\033[33m  ────────────────────────────────────────\033[0m\n");
+		printf("\033[1;33m   ☀  Turno %d\033[0m\n", turno);
+		printf("\033[33m  ────────────────────────────────────────\033[0m\n\n");
 		paso_dia(sociedad);
 		turno++;
 	}

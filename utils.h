@@ -15,6 +15,11 @@ int aleatorio(int minimo, int maximo);
 	* Salida: numero entero (numero_aleatorio) 
 	*/
 
+int leer_entero(int* destino);
+	/* Lee un entero de la entrada. Si no es un numero, descarta el resto de la linea.
+		Entrada: donde guardar el entero
+		Salida: 1 si leyo un numero, 0 si no era un numero, -1 si se acabo la entrada */
+
 int siguiente_caracter(FILE* archivo);
 	/* Obtiene el siguiente caracter del archivo
 		Entrada: el archivo

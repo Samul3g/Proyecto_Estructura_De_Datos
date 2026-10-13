@@ -28,32 +28,38 @@ int paso_dia(struct lista_comunas* sociedad){
     int valido = 0;
     valido = usuario_intercambio(sociedad);
     if(valido == 0){
-        printf("No se pudo realizar el intercambio\n");
+        printf("\033[31m  No se pudo realizar el intercambio.\033[0m\n");
     }
     valido = reduccion_bienes_servicios(sociedad);
     if(valido == 0){
-        printf("No se pudo reducir los bienes y servicios\n");
+        printf("\033[31m  No se pudo reducir los bienes y servicios.\033[0m\n");
     }
     int evento = aleatorio(1, 10);
     if(evento < 3){
-        printf("Evento: Emergencia\n");
-        valido = emergencia(comuna_random(sociedad));
+        struct comuna* afectada = comuna_random(sociedad);
+        printf("\n\033[31m  Evento: Emergencia en \033[1m");
+        imprimirString(afectada->nombre);
+        printf("\033[0m\n");
+        valido = emergencia(afectada);
         if(valido == 0){
-            printf("No se pudo realizar el evento\n");
+            printf("\033[31m  No se pudo realizar el evento.\033[0m\n");
         }
     }else if(evento < 8){
-        printf("Evento: Prosperidad\n");
-        valido = prosperidad(comuna_random(sociedad));
+        struct comuna* afectada = comuna_random(sociedad);
+        printf("\n\033[32m  Evento: Prosperidad en \033[1m");
+        imprimirString(afectada->nombre);
+        printf("\033[0m\n");
+        valido = prosperidad(afectada);
         if(valido == 0){
-            printf("No se pudo realizar el evento\n");
+            printf("\033[31m  No se pudo realizar el evento.\033[0m\n");
         }
     }else{
-        printf("Evento: Ninguno\n");
+        printf("\n\033[2m  Evento: Ninguno\033[0m\n");
     }
 
     valido = calcular_indice_sociedad(sociedad);
     if(valido == 0){
-        printf("No se pudo calcular el indice de la sociedad\n");
+        printf("\033[31m  No se pudo calcular el indice de la sociedad.\033[0m\n");
     }
 
     return 1;
@@ -194,6 +200,41 @@ int prosperidad(struct comuna* comuna){
 }
 
 
+/* Pide un entero dentro del rango. Si escriben texto, lo descarta y vuelve a preguntar.
+	Entrada: la pregunta, el minimo y el maximo
+	Salida: el entero, o -1 si se acabo la entrada */
+int pedir_numero(const char* pregunta, int minimo, int maximo){
+	int valor = 0;
+	printf("%s", pregunta);
+	int estado = leer_entero(&valor);
+	while(estado <= 0 || valor < minimo || valor > maximo){
+		if(estado < 0){
+			return -1;
+		}
+		printf("\033[31m  Numero invalido, fuera del rango.\033[0m\n");
+		printf("%s", pregunta);
+		estado = leer_entero(&valor);
+	}
+	return valor;
+}
+
+/* Recorre la lista y dice si algun recurso tiene cantidad mayor que 0
+	Entrada: la lista de recursos
+	Salida: 1 si hay algo para regalar, 0 si no */
+int hay_cantidad_disponible(struct lista_recursos* lista){
+	if(lista == NULL){
+		return 0;
+	}
+	struct nodo_lista_recursos* actual = lista->inicio;
+	while(actual != NULL){
+		if(actual->recurso->cantidad > 0){
+			return 1;
+		}
+		actual = actual->siguiente;
+	}
+	return 0;
+}
+
 /*Funcion que pide al usuario la comuna que regala y recibe y el servicio o bien a regalar y luego da el regalo
  * Entradas: Lista comunas
  * Salidas: 1 para exito, 0 para fracaso*/
@@ -209,36 +250,28 @@ int usuario_intercambio(struct lista_comunas* lista_comunas){
 	imprimir_lista_comunas(lista_comunas);
 	
 	int largoLista = largo_comuna(lista_comunas);
-	int correcto = 0; //ayuda para vaidaciones
-	
-	printf("\nElija el numero de la comuna que va a dar el regalo: ");
-	scanf("%d", &comunaRegalo);
-	
-	while(correcto == 0){
-		if(comunaRegalo <= 0 || comunaRegalo > largoLista){
-			printf("\nNumero invalido, fuera del rango");
-			printf("\nElija el numero de la comuna que va a dar el regalo: ");
-			scanf("%d", &comunaRegalo);
-		}else{
-				correcto = 1;
-		}
+	if(largoLista < 2){
+		printf("\033[33m  Hay una sola comuna, no hay otra a quien regalar.\033[0m\n");
+		return 1;
+	}
+
+	printf("\n\033[33m  Regalo\033[0m\n");
+	comunaRegalo = pedir_numero("\033[36m  ›\033[0m Elija el numero de la comuna que va a dar el regalo: ", 1, largoLista);
+	if(comunaRegalo < 0){
+		return 0;
 	}
 	
-	correcto = 0;
+	printf("\n\033[36m  ›\033[0m Elija el numero de la comuna que va a recibir el regalo: ");
+	int estado = leer_entero(&comunaRecibidora);
 	
-	printf("\nElija el numero de la comuna que va a recibir el regalo: ");
-	scanf("%d", &comunaRecibidora);
-	
-	while(correcto == 0){
-		if(comunaRecibidora <= 0 || comunaRecibidora > largoLista || comunaRecibidora == comunaRegalo){
-			printf("\nNumero invalido, fuera del rango o igual a la comuna que da el regalo");
-			printf("\nElija el numero de la comuna que va a recibir el regalo: ");
-			scanf("%d", &comunaRecibidora);
-		}else{
-				correcto = 1;
+	while(estado <= 0 || comunaRecibidora <= 0 || comunaRecibidora > largoLista || comunaRecibidora == comunaRegalo){
+		if(estado < 0){
+			return 0;
 		}
+		printf("\033[31m  Numero invalido, fuera del rango o igual a la comuna que da el regalo.\033[0m\n");
+		printf("\033[36m  ›\033[0m Elija el numero de la comuna que va a recibir el regalo: ");
+		estado = leer_entero(&comunaRecibidora);
 	}
-	correcto = 0;
 	
 	//Asignar comuna y numero (mas o menos)
 	struct comuna* comunaDa = NULL;
@@ -268,22 +301,10 @@ int usuario_intercambio(struct lista_comunas* lista_comunas){
 	}
 	
 	//Pedir si dar bien o servicio
-	int regalo = 0;
-	printf("\n\nElija el numero de lo que quiere regalar: ");
-	printf("\n1. Bien \n2. Servicio\n");
-	scanf("%d", &regalo);
-	
-	while(correcto == 0){
-		if(regalo != 1 && regalo !=2){
-			printf("\nNumero invalido, fuera del rango");
-			printf("\nElija el numero de lo que quiere regalar: ");
-			printf("\n1. Bien \n2. Servicio");
-			scanf("%d", &regalo);
-		}else{
-				correcto = 1;
-		}
+	int regalo = pedir_numero("\n\033[36m  ›\033[0m Elija el numero de lo que quiere regalar:\n    \033[1;33m1\033[0m  Bien\n    \033[1;33m2\033[0m  Servicio\n\033[36m  ›\033[0m ", 1, 2);
+	if(regalo < 0){
+		return 0;
 	}
-	correcto = 0;
 	
 	
 	//conseguir listas de bienes o servicios
@@ -300,51 +321,41 @@ int usuario_intercambio(struct lista_comunas* lista_comunas){
 	int largo_recu = largo_recurso(lista_dador);
 	
 	imprimir_recurso(lista_dador);
-	
-	printf("ingrese el numero del recurso que desea regalar: ");
-	scanf("%d", &n_recurso);
-	
-	while(correcto == 0){
-		if(n_recurso <= 0 || n_recurso > largo_recu){
-			printf("\nNumero invalido, fuera del rango");
-			printf("ingrese el numero del recurso que desea regalar: ");
-			scanf("%d", &n_recurso);
-		}else{
-				correcto = 1;
-		}	
+
+	if(hay_cantidad_disponible(lista_dador) == 0){
+		printf("\033[33m  No hay cantidad disponible para regalar.\033[0m\n");
+		return 1;
 	}
-	correcto = 0;
 	
-	//Asignar nodo recurso
-	i = 1;
-	struct nodo_lista_recursos* rec_actual = lista_dador->inicio;
 	struct nodo_recurso* recurso_dar = NULL;
-	
-	while(rec_actual != NULL){
+	while(recurso_dar == NULL){
+		n_recurso = pedir_numero("\033[36m  ›\033[0m Ingrese el numero del recurso que desea regalar: ", 1, largo_recu);
+		if(n_recurso < 0){
+			return 0;
+		}
+
+		i = 1;
+		struct nodo_lista_recursos* rec_actual = lista_dador->inicio;
+		while(rec_actual != NULL){
 			if(i == n_recurso){
-					recurso_dar = rec_actual->recurso;
-					break;
-			}else{
-				rec_actual = rec_actual->siguiente;
-				i++;
+				recurso_dar = rec_actual->recurso;
+				break;
 			}
+			rec_actual = rec_actual->siguiente;
+			i++;
+		}
+
+		if(recurso_dar != NULL && recurso_dar->cantidad <= 0){
+			printf("\033[31m  Ese recurso esta en 0. Elija otro.\033[0m\n");
+			recurso_dar = NULL;
+		}
 	}
 	
 	//Preguntar cantidad a regalar del recurso
-	int cant_regalar = 0;
-	printf("ingrese la cantidad del recurso que desea regalar: ");
-	scanf("%d", &cant_regalar);
-	
-	while(correcto == 0){
-		if(cant_regalar <= 0 || cant_regalar > recurso_dar->cantidad){
-			printf("\nNumero invalido, fuera del rango");
-			printf("ingrese la cantidad del recurso que desea regalar: ");
-			scanf("%d", &cant_regalar);
-		}else{
-				correcto = 1;
-		}	
+	int cant_regalar = pedir_numero("\033[36m  ›\033[0m Ingrese la cantidad del recurso que desea regalar: ", 1, recurso_dar->cantidad);
+	if(cant_regalar < 0){
+		return 0;
 	}
-	correcto = 0;
 	
 	//Efectuar regalo
 	int exito = 0;
@@ -361,5 +372,8 @@ int usuario_intercambio(struct lista_comunas* lista_comunas){
 		}
 	}
 
+	if(exito){
+		printf("\n\033[32m  El regalo quedo hecho.\033[0m\n");
+	}
 	return exito;
 }
