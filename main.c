@@ -93,7 +93,7 @@ void configuracion_inicial(){
 	printf("\n");
 	servicios = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de servicios que quiere \033[2m(entre 1 y 20)\033[0m: ", 1, 20);
 	printf("\n");
-	personas = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de personas que quiere \033[2m(entre 1 y 50)\033[0m: ", 1, 50);
+	personas = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de personas que quiere \033[2m(entre 1 y 500)\033[0m: ", 1, 500);
 }
 
 
