@@ -56,6 +56,7 @@ void barajar_lista_archivo(struct lista_archivo* lista);
 
 struct persona {
 	struct string* nombre;
+	struct lista_recursos* servicios;
 };
 
 struct nodo_lista_personas {
@@ -141,6 +142,8 @@ struct comuna {
     struct lista_personas* personas;
 	float satisfaccion;
 	float necesidad;
+	float reciprocidad;
+	float necesidad_local;
 };
 
 struct nodo_lista_comunas {

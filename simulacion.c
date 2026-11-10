@@ -22,8 +22,7 @@ struct comuna* comuna_random(struct lista_comunas* sociedad){
 
 /* Funcion que realiza un paso de dia en la simulacion
 	Entrada: sociedad
-	Salida: 1 (true/exito)
-*/
+	Salida: 1 (true/exito)*/
 int paso_dia(struct lista_comunas* sociedad){
     int valido = 0;
     valido = usuario_intercambio(sociedad);
@@ -65,25 +64,6 @@ int paso_dia(struct lista_comunas* sociedad){
     return 1;
 }
 
-/* Funcion que calcula el indice de la sociedad
-	Entrada: sociedad
-	Salida: 1 (true/exito)
-*/
-int calcular_indice_sociedad(struct lista_comunas* sociedad){
-    struct nodo_lista_comunas* actual = sociedad->inicio;
-    struct nodo_lista_comunas* inicio = sociedad->inicio;
-
-    calcular_necesidad(actual->comuna);
-    calcular_satisfaccion(actual);
-    actual = actual->siguiente;
-
-    while(actual != inicio){
-        calcular_necesidad(actual->comuna);
-        calcular_satisfaccion(actual);
-        actual = actual->siguiente;
-    }
-    return 1;
-}
 
 /* Funcion que reduce la cantidad de bienes y servicios en una comuna
 	Entrada: sociedad

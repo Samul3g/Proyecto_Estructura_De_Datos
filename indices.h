@@ -16,11 +16,20 @@ float sumatoria_recursos(struct lista_recursos* lista);
 /* Funcion que calcula el indice de necesidad de una comuna
 	Entrada: la comuna
 	Salida: el indice de necesidad */
-float calcular_necesidad(struct comuna* comuna);
+float calcular_necesidad(struct nodo_lista_comunas* nodo);
+float calcular_necesidad_local(struct comuna*;
 
 /* Funcion que calcula la satisfaccion de una comuna
 	Entrada: el nodo de la lista de comunas
 	Salida: el indice de satisfaccion */
-float calcular_satisfaccion(struct nodo_lista_comunas* nodo_lista_comunas);
+float calcular_satisfaccion(struct nodo_lista_comunas* nodo);
+
+float calcular_reciprocidad(struct comuna*);
+
+
+/*  Funcion que calcula el indice de la sociedad
+	Entrada: sociedad
+	Salida: 1 (true/exito)*/
+int calcular_indice_sociedad(struct lista_comunas* sociedad);
 
 #endif

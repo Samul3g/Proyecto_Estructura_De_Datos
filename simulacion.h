@@ -25,12 +25,6 @@ int reduccion_bienes_servicios(struct lista_comunas* sociedad);
 	Salida: 1 (true/exito)
 */
 
-int calcular_indice_sociedad(struct lista_comunas* sociedad);
-/* Funcion que calcula el indice de la sociedad
-	Entrada: sociedad
-	Salida: 1 (true/exito)
-*/
-
 struct comuna* comuna_random(struct lista_comunas* sociedad);
 /* Funcion que devuelve una comuna aleatoria de la lista de comunas
 	Entrada: sociedad
