@@ -1,8 +1,8 @@
 
-# Proyecto_Estructura_De_Datos
+# Proyecto_Estructuras_De_Datos
 
 
-Primer proyecto de Estructuras de Datos: Una sociedad solarpunk de comunas anarquistas
+Primer y segundo proyecto de Estructuras de Datos: Una sociedad solarpunk de comunas anarquistas
 
 
 II semestre, 2026
