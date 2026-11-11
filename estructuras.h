@@ -144,6 +144,8 @@ struct comuna {
 	float necesidad;
 	float reciprocidad;
 	float necesidad_local;
+	int regalos_dados;
+	int regalos_recibidos;
 };
 
 struct nodo_lista_comunas {
@@ -151,6 +153,7 @@ struct nodo_lista_comunas {
     struct nodo_lista_comunas* siguiente;
     struct nodo_lista_comunas* anterior;
 };
+
 
 struct lista_comunas {
     struct nodo_lista_comunas* inicio;
@@ -289,5 +292,28 @@ int largo_recurso(struct lista_recursos* lista);
 	/* Da una vuelta a la lista doble y devuelve el largo
 		Entrada: la lista doble
 		Salida: el largo de la lista */
+
+struct nodo_arbol_avl{
+		struct nodo_arbol_avl* izquierdo;
+		struct nodo_arbol_avl* derecho;
+		struct string* titulo_libro;
+		char* ruta;
+		int altura;
+};
+
+struct arbol_avl{
+		struct nodo_arbol_avl* raiz;
+};
+
+/*  Crea un arbol AVL
+	Entrada: ninguna
+	Salida: arbol AVL, con inicio en NULL */
+struct arbol_avl* crear_arbol_avl();
+	
+/* Crea un nodo de un arbol AVL
+ * Entradas: nombre del libro y la ruta
+ * Salidas: nodo del arbol*/
+struct nodo_arbol_avl* crear_nodo_avl(struct string nombre, const char* ruta);
+
 
 #endif

@@ -4,9 +4,8 @@
 #include "utils.h"
 
 
-struct lista_archivo* crear_lista_archivo() {
-    struct lista_archivo* lista =
-    calloc(1, sizeof(struct lista_archivo));
+struct lista_archivo* crear_lista_archivo(){
+    struct lista_archivo* lista = calloc(1, sizeof(struct lista_archivo));
     lista->inicio = NULL;
     lista->ultimo = NULL;
     return lista;
@@ -629,4 +628,39 @@ int largo_recurso(struct lista_recursos* lista) {
         nodo = nodo->siguiente;
     }
     return largo;
+}
+
+/*  Crea un arbol AVL
+	Entrada: ninguna
+	Salida: arbol AVL, con inicio en NULL */
+struct arbol_avl* crear_arbol_avl() {
+    struct arbol_avl* arbol_avl = calloc(1, sizeof(struct arbol_avl));
+    
+    arbol_avl->inicio = NULL;
+    
+    return arbol_avl;
+}
+
+/* Crea un nodo de un arbol AVL
+ * Entradas: nombre del libro y la ruta
+ * Salidas: nodo del arbol*/
+struct nodo_arbol_avl* crear_nodo_avl(struct string nombre, const char* ruta){
+	struct nodo_arbol_avl* nodo = calloc(1, sizeof(struct nodo_arbol_avl));
+	
+	if(nodo == NULL){
+			return NULL;
+	}	
+	
+	nodo->ruta == calloc(strlen(ruta) + 1);
+	
+	if(nodo->ruta == NULL){
+			free(nodo);
+			return NULL;
+	}
+	
+	strcpy(nodo->ruta, ruta);
+	nodo->titulo_libro = nombre;
+	nodo->altura = 1;
+	return nodo;
+
 }

@@ -186,3 +186,36 @@ struct nodo_recurso* crear_recurso_desde_linea(struct string* linea, int cantida
 
 	return crear_nodo_recurso(nombre, es_necesidad, maximo_int, relevancia_int, 0);
 }
+
+/* Compara dos strings
+	Entrada: los dos strings
+	Salida: -1 si a < b, 0 si son iguales, 1 si a > b */
+static int comparar_strings(struct string* a, struct string* b) {
+	
+	struct char_array* x = a->inicio;
+	struct char_array* y = b->inicio;
+	
+	while (x != NULL && y != NULL) {
+	
+		if (x->caracter != y->caracter) {
+			return (unsigned char)x->caracter - (unsigned char)y->caracter;
+		}
+	
+		x = x->siguiente;
+		y = y->siguiente;
+	
+	}
+	
+	if (x == NULL && y == NULL) {
+		return 0;   /* iguales */
+	}
+	
+	if (x == NULL) {
+		return -1;  /* a es mas corto, va primero */
+	
+	}
+	
+	return 1;
+
+}
+

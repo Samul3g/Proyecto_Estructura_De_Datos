@@ -45,4 +45,10 @@ struct nodo_recurso* crear_recurso_desde_linea(struct string* linea, int cantida
 		Entrada: la linea y cuantas personas viven en la comuna
 		Salida: el recurso, con el maximo calculado y cantidad en 0 */
 
+
+/* Compara dos strings
+	Entrada: los dos strings
+	Salida: -1 si a < b, 0 si son iguales, 1 si a > b */
+static int comparar_strings(struct string* a, struct string* b)
+
 #endif
