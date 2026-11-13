@@ -316,4 +316,24 @@ struct arbol_avl* crear_arbol_avl();
 struct nodo_arbol_avl* crear_nodo_avl(struct string nombre, const char* ruta);
 
 
+struct nodo_chaflaneado{
+	struct string* texto;              /* clave: el texto buscado (el arbol es su dueno) */
+	struct lista_archivo* libros;      /* valor: libros que contienen el texto (el arbol es su dueno) */
+	struct nodo_chaflaneado* izquierdo;
+	struct nodo_chaflaneado* derecho;
+	struct nodo_chaflaneado* padre;    
+};
+
+struct arbol_chaflaneado{
+		nodo_chaflaneado* raiz;
+		int mostrar_pasos;
+};
+
+/* Crea un arbol chaflaneado vacio
+ * Entrada: ninguna
+ * Salida: el arbol, con raiz en NULL */
+struct arbol_chaflaneado* crear_arbol_chaflaneado();
+	
+
+
 #endif

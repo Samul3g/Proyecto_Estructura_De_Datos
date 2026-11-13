@@ -15,7 +15,7 @@ int calcular_factor_balance(struct nodo_arbol_avl* nodo) {
 		return 0;
 	}
 	
-	return altura(nodo->izquierdo) - altura(nodo->derecho);
+	return nodo->izquierdo->altura - nodo->derecho->altura;
 }
 
 /* Actualiza la altura de un nodo 
@@ -23,7 +23,7 @@ int calcular_factor_balance(struct nodo_arbol_avl* nodo) {
  * Salida: ninguna */
 static void actualizar_altura(struct nodo_arbol_avl* nodo) {
 	
-	nodo->altura = 1 + mayor(altura(nodo->izquierdo), altura(nodo->derecho));
+	nodo->altura = 1 + mayor(nodo->izquierdo->altura, nodo->derecho->altura);
 
 }
 
@@ -185,7 +185,7 @@ int insertar_avl(struct arbol_avl* arbol, struct string* nombre, const char* rut
 
 }
 
-/* Bucas el titulo de un libro en el avl
+/* Buca el titulo de un libro en el avl
  * Entradas: arbol, nombre del libro 
  * Salidas: nodo del arbol o NULL si no lo encontro */
 struct nodo_arbol_avl* buscar_avl(struct arbol_avl* arbol, struct string* nombre) {
@@ -237,6 +237,6 @@ void imprimir_arbol_avl(struct arbol_avl* arbol) {
 		return;
 	}
 	
-	printf("Arbol AVL -  h = altura, fb = factor de balance\n");
+	printf("Arbol AVL.  h = altura, fb = factor de balance\n");
 	imprimir_nodo(arbol->raiz, 0);
 }
