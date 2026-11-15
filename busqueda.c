@@ -173,6 +173,8 @@ struct resultado_busqueda* buscar_texto(struct biblioteca* biblioteca, struct st
 		return NULL;
 	}
  
+	mostrar_pasos_chaflaneado(biblioteca->busquedas, 1);
+
 	printf("  Raiz de la cache antes:   ");
 	imprimir_raiz_chaflaneado(biblioteca->busquedas);
  

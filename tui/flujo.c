@@ -991,10 +991,17 @@ int tui_lectura_jugador(struct jugador* jugador, struct biblioteca* biblioteca) 
 
 	if (ejecutar_lectura(jugador->comunas[indice], biblioteca, texto, &informe) == 0) {
 		liberar_string(texto);
+		printf("\n");
+		widget_ayuda("Enter");
+		esperar_continuar();
 		tui_aviso("No se pudo buscar ese texto.");
 		return 0;
 	}
 	liberar_string(texto);
+
+	printf("\n");
+	widget_ayuda("Enter sigue a la lectura");
+	esperar_continuar();
 
 	tui_cls();
 	widget_titulo("Lectura");
