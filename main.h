@@ -33,11 +33,5 @@ void configuracion_inicial();
  * Salidas: impresion en la consola y 0 en caso de fallo, 1 en caso de exito
  */
  void imprimir_recurso(struct lista_recursos* lista);
-	 
-	 
-/*Funcion que pide al usuario la comuna que regala y recibe y el servicio o bien a regalar y luego da el regalo
- * Entradas: Lista comunas
- * Salidas: 1 para exito, 0 para fracaso*/
-int usuario_intercambio(struct lista_comunas* lista_comunas);
 
 #endif

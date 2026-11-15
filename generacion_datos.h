@@ -13,10 +13,10 @@ struct lista_comunas* generar_lista_comunas(struct lista_archivo* lista_archivo,
     Salida: la lista de recursos */
 struct lista_recursos* generar_lista_recursos(struct lista_archivo* lista_archivo, int cantidad_recursos, int cantidad_personas);
 
-/* Genera la lista de personas a partir de una lista de archivos con los nombres
-    Entrada: la lista de archivos con los nombres y cuantas personas lleva cada comuna
-    Salida: la lista de personas */
-struct lista_personas* generar_lista_personas(struct lista_archivo* lista_archivo, int cantidad);
+/* Genera la lista de personas y reparte el catalogo de servicios de la comuna
+    Entrada: los nombres, cuantas personas, y la lista de servicios ya generada para esa comuna
+    Salida: la lista de personas, cada una con una copia del siguiente servicio */
+struct lista_personas* generar_lista_personas(struct lista_archivo* lista_archivo, int cantidad, struct lista_recursos* servicios);
 
 /* Agrega los recursos a las comunas
     Entrada: la lista de comunas, las listas de bienes, servicios y personas, y cuantos de cada uno lleva cada comuna

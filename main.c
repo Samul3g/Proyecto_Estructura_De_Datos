@@ -8,6 +8,8 @@
 #include "simulacion.h"
 #include "utils.h"
 #include "biblioteca.h"
+#include "constantes.h"
+#include "jugador.h"
 
 	//Variables globales
 	int cantidad_comunas = 0;
@@ -88,7 +90,7 @@ void configuracion_inicial(){
 	printf("\n\n\033[33m  ────────────────────────────────────────\033[0m\n");
 	printf("\033[1;33m   Configuracion\033[0m\n");
 	printf("\033[33m  ────────────────────────────────────────\033[0m\n\n");
-	cantidad_comunas = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de comunas que quiere \033[2m(entre 1 y 50)\033[0m: ", 1, 50);
+	cantidad_comunas = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de comunas que quiere \033[2m(entre 3 y 50)\033[0m: ", 3, 50);
 	printf("\n");
 	bienes = pedir_cantidad("\033[36m  ›\033[0m Inserte la cantidad de bienes que quiere \033[2m(entre 1 y 20)\033[0m: ", 1, 20);
 	printf("\n");
@@ -107,29 +109,46 @@ void configuracion_inicial(){
 int main(){
 	configuracion_inicial();
 	
-	struct biblioteca* biblioteca = crear_biblioteca(/*poner aqui ruta del corpus */);
+	struct biblioteca* biblioteca = crear_biblioteca(RUTA_CORPUS);
 	if(biblioteca == NULL){
-		printf("\033[31m  No se pudo abrir el corpus %s\033[0m\n", /*poner aqui ruta del corpus */);
+		printf("\033[31m  No se pudo abrir el corpus %s\033[0m\n", RUTA_CORPUS);
 		return 1;
 	}
 	
 	struct lista_comunas* sociedad = generar_datos(cantidad_comunas, servicios, bienes, personas);
+	if(sociedad == NULL){
+		printf("\033[31m  No se pudo crear la sociedad.\033[0m\n");
+		liberar_biblioteca(biblioteca);
+		return 1;
+	}
 	
 	asignar_biblioteca_sociedad(sociedad, biblioteca);
 	calcular_indice_sociedad(sociedad);
 
-	printf("\n\033[32m  La sociedad ya esta lista.\033[0m\n");
+	struct jugador* jugador = crear_jugador(sociedad);
+	if(jugador == NULL){
+		printf("\033[31m  Hacen falta al menos %d comunas para el jugador.\033[0m\n", MAX_COMUNAS_JUGADOR);
+		liberar_lista_comunas(sociedad);
+		liberar_biblioteca(biblioteca);
+		return 1;
+	}
+
+	printf("\n\033[32m  La sociedad ya esta lista. Tus primeras %d comunas son las tuyas.\033[0m\n", jugador->cantidad);
 
 	int turno = 1;
-	while(turno <= 10){
+	int sigue = 1;
+	while(turno <= TOPE_TURNOS && sigue){
 		printf("\n\033[33m  ────────────────────────────────────────\033[0m\n");
 		printf("\033[1;33m   ☀  Turno %d\033[0m\n", turno);
 		printf("\033[33m  ────────────────────────────────────────\033[0m\n\n");
-		paso_dia(sociedad);
+		sigue = paso_dia(sociedad, jugador, biblioteca);
 		turno++;
 	}
 	
 	despedida();
+	liberar_jugador(jugador);
+	liberar_lista_comunas(sociedad);
+	liberar_biblioteca(biblioteca);
 	return 0;
 }
 	

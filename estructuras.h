@@ -57,6 +57,8 @@ void barajar_lista_archivo(struct lista_archivo* lista);
 struct persona {
 	struct string* nombre;
 	struct lista_recursos* servicios;
+	struct lista_archivo* libros;
+	int libros_leidos;
 };
 
 struct nodo_lista_personas {
@@ -109,6 +111,16 @@ int largo_personas(struct lista_personas* lista);
 		Entrada: la lista
 		Salida: el largo de la lista */
 
+int quitar_persona_de_lista(struct lista_personas* lista, struct persona* persona);
+	/* Saca a la persona de la lista sin liberarla
+		Entrada: la lista y la persona
+		Salida: 1 si estaba y quedo fuera, 0 si algun puntero es NULL o no estaba */
+
+int mover_persona(struct lista_personas* origen, struct lista_personas* destino, struct persona* persona);
+	/* Pasa la persona de una lista a la otra
+		Entrada: la lista de origen, la de destino y la persona
+		Salida: 1 si quedo en el destino, 0 si algun puntero es NULL o no estaba en el origen */
+
 struct string {
 	struct char_array* inicio;
 };
@@ -125,6 +137,12 @@ struct nodo_recurso {
     int cantidad;
 };
 
+int asignar_servicio_persona(struct persona* persona, struct nodo_recurso* servicio);
+	/* Mete el servicio en la lista de la persona
+		Entrada: la persona y el recurso
+		Salida: 1 si la persona se queda con ese recurso, 0 si algun puntero es NULL o ya lo tiene.
+		        Si devuelve 0, el recurso sigue siendo de quien llamo */
+
 struct nodo_lista_recursos {
     struct nodo_recurso* recurso;
     struct nodo_lista_recursos* siguiente;
@@ -138,7 +156,6 @@ struct lista_recursos {
 struct comuna {
     struct string* nombre;
     struct lista_recursos* bienes;
-    struct lista_recursos* servicios;
     struct lista_personas* personas;
 	float satisfaccion;
 	float necesidad;
@@ -199,7 +216,7 @@ struct lista_recursos* crear_lista_recursos();
 struct comuna* crear_comuna(struct string* nombre);
 	/* Crea una comuna con sus dos listas de inventario vacias
 		Entrada: el nombre de la comuna
-		Salida: la comuna, con bienes y servicios listos para usar */
+		Salida: la comuna, con bienes y personas listos para usar */
 
 struct nodo_lista_comunas* crear_nodo_lista_comunas(struct comuna* comuna);
 	/* Arma el nodo del circulo a partir de una comuna
@@ -270,7 +287,7 @@ void liberar_lista_recursos(struct lista_recursos* lista_recursos);
 		Salida: toda esa lista queda liberada */
 
 void liberar_comuna(struct comuna* comuna);
-	/* Libera una comuna, su nombre y las listas de bienes y servicios
+	/* Libera una comuna, su nombre, sus bienes y sus personas
 		Entrada: la comuna
 		Salida: la comuna y su inventario quedan liberados */
 
