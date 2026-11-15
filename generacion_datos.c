@@ -58,32 +58,48 @@ struct lista_recursos* generar_lista_recursos(struct lista_archivo* lista_archiv
     return lista;
 }
 
-/* Genera la lista de personas a partir de una lista de archivos con los nombres
-    Entrada: la lista de archivos con los nombres y cuantas personas lleva cada comuna
-    Salida: la lista de personas */
-struct lista_personas* generar_lista_personas(struct lista_archivo* lista_archivo, int cantidad) {
+/* Copia un recurso para que la persona tenga el suyo, separado del catalogo
+    Entrada: el recurso del catalogo
+    Salida: otro recurso con el mismo nombre y los mismos datos */
+static struct nodo_recurso* copiar_recurso(struct nodo_recurso* recurso) {
+    return crear_nodo_recurso(
+        copiar_string(recurso->nombre),
+        recurso->necesidad,
+        recurso->maximo,
+        recurso->relevancia,
+        recurso->cantidad);
+}
+
+/* Genera la lista de personas y reparte el catalogo de servicios de la comuna
+    Entrada: los nombres, cuantas personas, y la lista de servicios ya generada para esa comuna
+    Salida: la lista de personas, cada una con una copia del siguiente servicio */
+struct lista_personas* generar_lista_personas(struct lista_archivo* lista_archivo, int cantidad, struct lista_recursos* servicios) {
     if (lista_archivo == NULL) {
         return NULL;
     }
 
     struct lista_personas* lista = crear_lista_personas();
     int indice = 0;
+    struct nodo_lista_recursos* servicio = NULL;
+    if (servicios != NULL) {
+        servicio = servicios->inicio;
+    }
     struct entrada_lista_archivo* actual = lista_archivo->inicio;
+
     while (actual != NULL && indice < cantidad) {
-        struct char_array* c = actual->nombre->inicio;
-        struct string* nombre = crear_string("");
+        struct persona* persona = crear_persona(copiar_string(actual->nombre));
 
-        nombre->inicio = crear_char_array(c->caracter);
-
-        struct char_array* nombre_recorrer = nombre->inicio;
-        c = c->siguiente;
-        while (c != NULL) {
-            nombre_recorrer->siguiente = crear_char_array(c->caracter);
-            nombre_recorrer = nombre_recorrer->siguiente;
-            c = c->siguiente;
+        if (aleatorio(0, 9) != 0) {
+            if (servicio != NULL) {
+                agregar_recurso(persona->servicios, copiar_recurso(servicio->recurso));
+                servicio = servicio->siguiente;
+                if (servicio == NULL) {
+                    servicio = servicios->inicio;
+                }
+            }
         }
 
-        agregar_persona(lista, crear_persona(nombre));
+        agregar_persona(lista, persona);
         indice++;
         actual = actual->siguiente;
     }
@@ -92,38 +108,31 @@ struct lista_personas* generar_lista_personas(struct lista_archivo* lista_archiv
 
 /* Agrega los recursos a las comunas
     Entrada: la lista de comunas, las listas de bienes, servicios y personas, y cuantos de cada uno lleva cada comuna
-    Salida: las comunas con sus recursos */
+    Salida: las comunas con sus bienes y sus personas, cada persona con su servicio */
 void agregar_recursos_comunas(struct lista_comunas* lista_comunas, struct lista_archivo* lista_bienes, struct lista_archivo* lista_servicios, struct lista_archivo* lista_personas, int cantidad_bienes, int cantidad_servicios, int cantidad_personas) {
-    
+    if (lista_comunas == NULL || lista_comunas->inicio == NULL) {
+        return;
+    }
+
     struct nodo_lista_comunas* inicio = lista_comunas->inicio;
     struct nodo_lista_comunas* actual = inicio;
 
-    barajar_lista_archivo(lista_bienes);
-    barajar_lista_archivo(lista_servicios);
-    barajar_lista_archivo(lista_personas);
-    liberar_lista_recursos(actual -> comuna -> bienes);
-    liberar_lista_recursos(actual -> comuna -> servicios);
-    liberar_lista_personas(actual -> comuna -> personas);
-    actual -> comuna -> bienes = generar_lista_recursos(lista_bienes, cantidad_bienes, cantidad_personas);
-    actual -> comuna -> servicios = generar_lista_recursos(lista_servicios, cantidad_servicios, cantidad_personas);
-    actual -> comuna -> personas = generar_lista_personas(lista_personas, cantidad_personas);
-    barajar_lista_archivo(lista_bienes);
-    barajar_lista_archivo(lista_servicios);
-    barajar_lista_archivo(lista_personas);
-    actual = actual->siguiente;
-
-    while (actual != inicio) {
-        liberar_lista_recursos(actual -> comuna -> bienes);
-        liberar_lista_recursos(actual -> comuna -> servicios);
-        liberar_lista_personas(actual -> comuna -> personas);
-        actual -> comuna -> bienes = generar_lista_recursos(lista_bienes, cantidad_bienes, cantidad_personas);
-        actual -> comuna -> servicios = generar_lista_recursos(lista_servicios, cantidad_servicios, cantidad_personas);
-        actual -> comuna -> personas = generar_lista_personas(lista_personas, cantidad_personas);
+    do {
         barajar_lista_archivo(lista_bienes);
         barajar_lista_archivo(lista_servicios);
         barajar_lista_archivo(lista_personas);
+
+        liberar_lista_recursos(actual->comuna->bienes);
+        liberar_lista_personas(actual->comuna->personas);
+
+        actual->comuna->bienes = generar_lista_recursos(lista_bienes, cantidad_bienes, cantidad_personas);
+
+        struct lista_recursos* servicios = generar_lista_recursos(lista_servicios, cantidad_servicios, cantidad_personas);
+        actual->comuna->personas = generar_lista_personas(lista_personas, cantidad_personas, servicios);
+        liberar_lista_recursos(servicios);
+
         actual = actual->siguiente;
-    }
+    } while (actual != inicio);
 }
 
 /* Genera los datos de las comunas y los recursos

@@ -150,6 +150,9 @@ struct persona* crear_persona(struct string* nombre) {
     struct persona* persona =
     calloc(1, sizeof(struct persona));
     persona->nombre = nombre;
+    persona->servicios = crear_lista_recursos();
+    persona->libros = crear_lista_archivo();
+    persona->libros_leidos = 0;
     return persona;
 }
 
@@ -183,6 +186,8 @@ void agregar_persona(struct lista_personas* lista, struct persona* persona) {
 	Salida: la persona queda liberada */
 void liberar_persona(struct persona* persona) {
     liberar_string(persona->nombre);
+    liberar_lista_recursos(persona->servicios);
+    liberar_lista_archivo(persona->libros);
     free(persona);
 }
 
@@ -223,6 +228,71 @@ int largo_personas(struct lista_personas* lista) {
         nodo = nodo->siguiente;
     }
     return largo;
+}
+
+/* Mete el servicio en la lista de la persona
+	Entrada: la persona y el recurso
+	Salida: 1 si la persona se queda con ese recurso, 0 si algun puntero es NULL o ya lo tiene.
+	        Si devuelve 0, el recurso sigue siendo de quien llamo */
+int asignar_servicio_persona(struct persona* persona, struct nodo_recurso* servicio) {
+    if (persona == NULL || servicio == NULL) {
+        return 0;
+    }
+    if (persona->servicios == NULL) {
+        persona->servicios = crear_lista_recursos();
+    }
+    if (buscar_recurso(persona->servicios, servicio->nombre) != NULL) {
+        return 0;
+    }
+    agregar_recurso(persona->servicios, servicio);
+    return 1;
+}
+
+/* Saca a la persona de la lista sin liberarla
+	Entrada: la lista y la persona
+	Salida: 1 si estaba y quedo fuera, 0 si algun puntero es NULL o no estaba */
+int quitar_persona_de_lista(struct lista_personas* lista, struct persona* persona) {
+    if (lista == NULL || persona == NULL) {
+        return 0;
+    }
+
+    struct nodo_lista_personas* anterior = NULL;
+    struct nodo_lista_personas* actual = lista->inicio;
+
+    while (actual != NULL) {
+        if (actual->persona == persona) {
+            if (anterior == NULL) {
+                lista->inicio = actual->siguiente;
+            } else {
+                anterior->siguiente = actual->siguiente;
+            }
+            if (lista->ultimo == actual) {
+                lista->ultimo = anterior;
+            }
+            free(actual);
+            return 1;
+        }
+        anterior = actual;
+        actual = actual->siguiente;
+    }
+    return 0;
+}
+
+/* Pasa la persona de una lista a la otra
+	Entrada: la lista de origen, la de destino y la persona
+	Salida: 1 si quedo en el destino, 0 si algun puntero es NULL o no estaba en el origen */
+int mover_persona(struct lista_personas* origen, struct lista_personas* destino, struct persona* persona) {
+    if (origen == NULL || destino == NULL || persona == NULL) {
+        return 0;
+    }
+    if (origen == destino) {
+        return 1;
+    }
+    if (!quitar_persona_de_lista(origen, persona)) {
+        return 0;
+    }
+    agregar_persona(destino, persona);
+    return 1;
 }
 
 /* Crea un char_array con el caracter
@@ -403,7 +473,6 @@ struct comuna* crear_comuna(struct string* nombre) {
     calloc(1, sizeof(struct comuna));
     comuna->nombre = nombre;
     comuna->bienes = crear_lista_recursos();
-    comuna->servicios = crear_lista_recursos();
     comuna->personas = crear_lista_personas();
     comuna->satisfaccion = 0;
     comuna->necesidad = 0;
@@ -560,12 +629,11 @@ void liberar_lista_recursos(struct lista_recursos* lista_recursos) {
     free(lista_recursos);
 }
 
-/* Libera una comuna, su nombre y las listas de bienes y servicios
+/* Libera una comuna, su nombre, sus bienes y sus personas
 	Entrada: la comuna
 	Salida: la comuna y su inventario quedan liberados */
 void liberar_comuna(struct comuna* comuna) {
     liberar_lista_recursos(comuna->bienes);
-    liberar_lista_recursos(comuna->servicios);
     liberar_lista_personas(comuna->personas);
     liberar_string(comuna->nombre);
     free(comuna);
