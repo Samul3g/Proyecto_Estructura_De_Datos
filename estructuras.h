@@ -146,6 +146,7 @@ struct comuna {
 	float necesidad_local;
 	int regalos_dados;
 	int regalos_recibidos;
+	struct biblioteca* biblioteca;
 };
 
 struct nodo_lista_comunas {

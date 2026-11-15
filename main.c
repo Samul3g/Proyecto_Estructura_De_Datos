@@ -7,6 +7,7 @@
 #include "indices.h"
 #include "simulacion.h"
 #include "utils.h"
+#include "biblioteca.h"
 
 	//Variables globales
 	int cantidad_comunas = 0;
@@ -105,8 +106,16 @@ void configuracion_inicial(){
 /*Funcion principal de toda la simulacion*/
 int main(){
 	configuracion_inicial();
+	
+	struct biblioteca* biblioteca = crear_biblioteca();
+	if(biblioteca == NULL){
+		print("\033[31m  No se pudo abrir el corpus %s\033[0m\n", RUTA_CORPUS);
+		return 1;
+	}
+	
 	struct lista_comunas* sociedad = generar_datos(cantidad_comunas, servicios, bienes, personas);
-
+	
+	asignar_biblioteca_sociedad(sociedad, biblioteca);
 	calcular_indice_sociedad(sociedad);
 
 	printf("\n\033[32m  La sociedad ya esta lista.\033[0m\n");
@@ -119,6 +128,7 @@ int main(){
 		paso_dia(sociedad);
 		turno++;
 	}
+	
 	despedida();
 }
 	
