@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "estructuras.h"
 #include "manejo_recursos.h"
 #include "indices.h"
@@ -6,7 +8,51 @@
 #include "jugador.h"
 #include "disolucion.h"
 #include "constantes.h"
+#include "tui/tui.h"
+#include "tui/flujo.h"
 
+
+static void nombre_cstr(struct string* origen, char* destino, int tope) {
+	int i = 0;
+	struct char_array* actual = NULL;
+	if (destino == NULL || tope <= 0) {
+		return;
+	}
+	if (origen != NULL) {
+		actual = origen->inicio;
+	}
+	while (actual != NULL && i < tope - 1) {
+		destino[i] = actual->caracter;
+		actual = actual->siguiente;
+		i++;
+	}
+	destino[i] = '\0';
+}
+
+/* Deja el registro vacio.
+	Entrada: el registro
+	Salida: cantidad en 0 */
+void registro_regalos_iniciar(struct registro_regalos* registro) {
+	if (registro == NULL) {
+		return;
+	}
+	registro->cantidad = 0;
+}
+
+/* Anota un regalo autonomo si todavia hay espacio.
+	Entrada: el registro, las comunas y el texto ya armado
+	Salida: el registro crece en uno, o se queda igual si esta lleno o falta un puntero */
+void registro_regalos_agregar(struct registro_regalos* registro, struct comuna* origen, struct comuna* destino, const char* mensaje) {
+	struct regalo_log* entrada;
+	if (registro == NULL || mensaje == NULL || registro->cantidad >= TOPE_REGALOS_LOG) {
+		return;
+	}
+	entrada = &registro->entradas[registro->cantidad];
+	entrada->origen = origen;
+	entrada->destino = destino;
+	snprintf(entrada->mensaje, sizeof(entrada->mensaje), "%s", mensaje);
+	registro->cantidad++;
+}
 
 int registrar_regalo (struct comuna* origen, struct comuna* destino) {
 	if (origen == NULL || destino == NULL) {
@@ -35,7 +81,7 @@ struct comuna* comuna_random(struct lista_comunas* sociedad){
 /* Funcion que realiza un paso de dia en la simulacion
 	Entrada: sociedad y jugador
 	Salida: 1 si la partida sigue, 0 si una comuna del jugador cruzo un umbral */
-int paso_dia(struct lista_comunas* sociedad, struct jugador* jugador, struct biblioteca* biblioteca){
+static int paso_dia_texto(struct lista_comunas* sociedad, struct jugador* jugador, struct biblioteca* biblioteca){
     int valido = 0;
     valido = usuario_intercambio(sociedad, jugador);
     if(valido == 0){
@@ -83,6 +129,67 @@ int paso_dia(struct lista_comunas* sociedad, struct jugador* jugador, struct bib
 
     valido = disolver_marcadas(sociedad, jugador);
     return valido;
+}
+
+/* Funcion que realiza un paso de dia en la simulacion
+	Entrada: sociedad, jugador, biblioteca y el numero de turno
+	Salida: 1 si la partida sigue, 0 si una comuna del jugador cruzo un umbral */
+int paso_dia(struct lista_comunas* sociedad, struct jugador* jugador, struct biblioteca* biblioteca, int turno){
+	int valido = 0;
+	int evento = 0;
+	if (!tui_es_tty()) {
+		return paso_dia_texto(sociedad, jugador, biblioteca);
+	}
+
+	tui_ciudadanos_dia(jugador);
+	while (valido == 0) {
+		tui_hub(jugador, turno);
+		valido = tui_regalo_jugador(sociedad, jugador);
+	}
+
+	valido = tui_lectura_jugador(jugador, biblioteca);
+	if (valido == 0) {
+		tui_aviso("No se pudo realizar la lectura.");
+	}
+
+	valido = intercambio_autonomo(sociedad, jugador);
+	if (valido == 0) {
+		tui_aviso("No se pudo realizar el intercambio autonomo.");
+	}
+
+	valido = reduccion_bienes_servicios(sociedad);
+	if (valido == 0) {
+		tui_aviso("No se pudo reducir los bienes.");
+	}
+
+	evento = aleatorio(1, 10);
+	if (evento < 3) {
+		struct comuna* afectada = comuna_random(sociedad);
+		tui_evento(1, afectada);
+		valido = emergencia(afectada);
+		if (valido == 0) {
+			tui_aviso("No se pudo realizar el evento.");
+		}
+	} else if (evento < 8) {
+		struct comuna* afectada = comuna_random(sociedad);
+		tui_evento(2, afectada);
+		valido = prosperidad(afectada);
+		if (valido == 0) {
+			tui_aviso("No se pudo realizar el evento.");
+		}
+	} else {
+		tui_evento(0, NULL);
+	}
+
+	valido = calcular_indice_sociedad(sociedad);
+	if (valido == 0) {
+		tui_aviso("No se pudo calcular el indice de la sociedad.");
+	}
+
+	tui_linea_postdia(jugador);
+	valido = disolver_marcadas(sociedad, jugador);
+	tui_msleep(800);
+	return valido;
 }
 
 
@@ -274,11 +381,50 @@ static struct comuna* comuna_por_numero(struct lista_comunas* lista, int numero)
 	return NULL;
 }
 
+/* Pasa una cantidad de un bien y anota el regalo. No imprime.
+	Entrada: quien da, quien recibe, el recurso y la cantidad
+	Salida: 1 si el bien quedo movido, 0 si no se pudo */
+int regalo_bien_jugador(struct comuna* origen, struct comuna* destino, struct nodo_recurso* recurso, int cantidad) {
+	int exito;
+	if (origen == NULL || destino == NULL || recurso == NULL || origen == destino) {
+		return 0;
+	}
+	if (cantidad < 1 || cantidad > recurso->cantidad) {
+		return 0;
+	}
+	exito = aumento_bien(recurso->nombre, cantidad, destino);
+	if (exito) {
+		exito = reduccion_bien(recurso->nombre, cantidad, origen);
+	}
+	if (exito) {
+		registrar_regalo(origen, destino);
+	}
+	return exito;
+}
+
+/* Muda a la persona y anota el regalo. No imprime.
+	Entrada: quien da, quien recibe y la persona
+	Salida: 1 si la persona quedo en el destino, 0 si no se pudo */
+int regalo_persona_jugador(struct comuna* origen, struct comuna* destino, struct persona* persona) {
+	int exito;
+	if (origen == NULL || destino == NULL || persona == NULL || origen == destino) {
+		return 0;
+	}
+	if (origen->personas == NULL || destino->personas == NULL) {
+		return 0;
+	}
+	exito = mover_persona(origen->personas, destino->personas, persona);
+	if (exito) {
+		registrar_regalo(origen, destino);
+	}
+	return exito;
+}
+
 /*Funcion que pide al usuario la comuna que regala y recibe y el bien o la persona a regalar y luego da el regalo.
  * Solo las comunas del jugador pueden dar.
  * Entradas: lista de comunas y el jugador
  * Salidas: 1 para exito, 0 para fracaso*/
-int usuario_intercambio(struct lista_comunas* lista_comunas, struct jugador* jugador){
+static int usuario_intercambio_texto(struct lista_comunas* lista_comunas, struct jugador* jugador){
 	if(lista_comunas == NULL || jugador == NULL || jugador->cantidad < 1){
 			return 0;
 	}
@@ -401,6 +547,13 @@ int usuario_intercambio(struct lista_comunas* lista_comunas, struct jugador* jug
 	return exito;
 }
 
+int usuario_intercambio(struct lista_comunas* lista_comunas, struct jugador* jugador){
+	if (tui_es_tty()) {
+		return tui_regalo_jugador(lista_comunas, jugador);
+	}
+	return usuario_intercambio_texto(lista_comunas, jugador);
+}
+
 /* Peso para recibir un regalo autonomo.
 	Si todavia no ha recibido nada, el peso es 1.
 	Entrada: la comuna
@@ -469,7 +622,7 @@ static struct comuna* elegir_receptora(struct lista_comunas* sociedad, struct co
 /* Regala un bien con stock. La cantidad sale al azar.
 	Entrada: quien da y quien recibe
 	Salida: 1 si el bien paso, 0 si no habia stock o el movimiento fallo */
-static int regalar_bien_autonomo(struct comuna* origen, struct comuna* destino){
+static int regalar_bien_autonomo(struct comuna* origen, struct comuna* destino, struct registro_regalos* registro){
 	if(origen == NULL || origen->bienes == NULL){
 		return 0;
 	}
@@ -509,13 +662,16 @@ static int regalar_bien_autonomo(struct comuna* origen, struct comuna* destino){
 		exito = reduccion_bien(recurso->nombre, cantidad, origen);
 	}
 	if(exito){
-		printf("\033[32m  Regalo autonomo:\033[0m ");
-		imprimirString(origen->nombre);
-		printf(" da %d de ", cantidad);
-		imprimirString(recurso->nombre);
-		printf(" a ");
-		imprimirString(destino->nombre);
-		printf(".\n");
+		char nombre_origen[64];
+		char nombre_recurso[64];
+		char nombre_destino[64];
+		char mensaje[256];
+		nombre_cstr(origen->nombre, nombre_origen, (int)sizeof(nombre_origen));
+		nombre_cstr(recurso->nombre, nombre_recurso, (int)sizeof(nombre_recurso));
+		nombre_cstr(destino->nombre, nombre_destino, (int)sizeof(nombre_destino));
+		snprintf(mensaje, sizeof(mensaje), "\033[32m  Regalo autonomo:\033[0m %s da %d de %s a %s.",
+			nombre_origen, cantidad, nombre_recurso, nombre_destino);
+		registro_regalos_agregar(registro, origen, destino, mensaje);
 	}
 	return exito;
 }
@@ -523,7 +679,7 @@ static int regalar_bien_autonomo(struct comuna* origen, struct comuna* destino){
 /* Muda una persona al azar.
 	Entrada: quien da y quien recibe
 	Salida: 1 si la persona se mudo, 0 si no habia gente */
-static int regalar_persona_autonoma(struct comuna* origen, struct comuna* destino){
+static int regalar_persona_autonoma(struct comuna* origen, struct comuna* destino, struct registro_regalos* registro){
 	if(origen == NULL || origen->personas == NULL || destino == NULL || destino->personas == NULL){
 		return 0;
 	}
@@ -536,13 +692,16 @@ static int regalar_persona_autonoma(struct comuna* origen, struct comuna* destin
 	struct persona* persona = persona_por_numero(origen->personas, aleatorio(1, n));
 	int exito = mover_persona(origen->personas, destino->personas, persona);
 	if(exito){
-		printf("\033[32m  Regalo autonomo:\033[0m ");
-		imprimirString(origen->nombre);
-		printf(" muda a ");
-		imprimirString(persona->nombre);
-		printf(" hacia ");
-		imprimirString(destino->nombre);
-		printf(".\n");
+		char nombre_origen[64];
+		char nombre_persona[64];
+		char nombre_destino[64];
+		char mensaje[256];
+		nombre_cstr(origen->nombre, nombre_origen, (int)sizeof(nombre_origen));
+		nombre_cstr(persona->nombre, nombre_persona, (int)sizeof(nombre_persona));
+		nombre_cstr(destino->nombre, nombre_destino, (int)sizeof(nombre_destino));
+		snprintf(mensaje, sizeof(mensaje), "\033[32m  Regalo autonomo:\033[0m %s muda a %s hacia %s.",
+			nombre_origen, nombre_persona, nombre_destino);
+		registro_regalos_agregar(registro, origen, destino, mensaje);
 	}
 	return exito;
 }
@@ -550,7 +709,7 @@ static int regalar_persona_autonoma(struct comuna* origen, struct comuna* destin
 /* Una comuna intenta dar. Primero sale el tipo (bien o mudanza); si no puede, prueba el otro.
 	Entrada: la sociedad y quien da
 	Salida: 1 si regalo, 0 si no */
-static int intentar_regalo_autonomo(struct lista_comunas* sociedad, struct comuna* origen){
+static int intentar_regalo_autonomo(struct lista_comunas* sociedad, struct comuna* origen, struct registro_regalos* registro){
 	struct comuna* destino = elegir_receptora(sociedad, origen);
 	if(destino == NULL){
 		return 0;
@@ -559,14 +718,14 @@ static int intentar_regalo_autonomo(struct lista_comunas* sociedad, struct comun
 	int primero_bien = aleatorio(1, 2) == 1;
 	int exito = 0;
 	if(primero_bien){
-		exito = regalar_bien_autonomo(origen, destino);
+		exito = regalar_bien_autonomo(origen, destino, registro);
 		if(exito == 0){
-			exito = regalar_persona_autonoma(origen, destino);
+			exito = regalar_persona_autonoma(origen, destino, registro);
 		}
 	}else{
-		exito = regalar_persona_autonoma(origen, destino);
+		exito = regalar_persona_autonoma(origen, destino, registro);
 		if(exito == 0){
-			exito = regalar_bien_autonomo(origen, destino);
+			exito = regalar_bien_autonomo(origen, destino, registro);
 		}
 	}
 
@@ -585,16 +744,27 @@ int intercambio_autonomo(struct lista_comunas* sociedad, struct jugador* jugador
 		return 0;
 	}
 
+	struct registro_regalos registro;
+	registro_regalos_iniciar(&registro);
+
 	struct nodo_lista_comunas* inicio = sociedad->inicio;
 	struct nodo_lista_comunas* actual = inicio;
 	do {
 		if(es_comuna_jugador(jugador, actual->comuna) == 0){
 			if(aleatorio(1, 100) <= PROBABILIDAD_DAR){
-				intentar_regalo_autonomo(sociedad, actual->comuna);
+				intentar_regalo_autonomo(sociedad, actual->comuna, &registro);
 			}
 		}
 		actual = actual->siguiente;
 	} while(actual != inicio);
+
+	if (tui_es_tty()) {
+		tui_montaje_autonomo(jugador, &registro);
+	} else {
+		for (int i = 0; i < registro.cantidad; i++) {
+			printf("%s\n", registro.entradas[i].mensaje);
+		}
+	}
 
 	return 1;
 }

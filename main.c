@@ -9,7 +9,8 @@
 #include "utils.h"
 #include "biblioteca.h"
 #include "constantes.h"
-#include "jugador.h"
+#include "tui/flujo.h"
+#include "tui/tui.h"
 
 	//Variables globales
 	int cantidad_comunas = 0;
@@ -107,16 +108,19 @@ void configuracion_inicial(){
 
 /*Funcion principal de toda la simulacion*/
 int main(){
-	configuracion_inicial();
+	tui_init();
+	tui_preparar_partida();
 	
 	struct biblioteca* biblioteca = crear_biblioteca(RUTA_CORPUS);
 	if(biblioteca == NULL){
+		tui_shutdown();
 		printf("\033[31m  No se pudo abrir el corpus %s\033[0m\n", RUTA_CORPUS);
 		return 1;
 	}
 	
 	struct lista_comunas* sociedad = generar_datos(cantidad_comunas, servicios, bienes, personas);
 	if(sociedad == NULL){
+		tui_shutdown();
 		printf("\033[31m  No se pudo crear la sociedad.\033[0m\n");
 		liberar_biblioteca(biblioteca);
 		return 1;
@@ -127,28 +131,25 @@ int main(){
 
 	struct jugador* jugador = crear_jugador(sociedad);
 	if(jugador == NULL){
+		tui_shutdown();
 		printf("\033[31m  Hacen falta al menos %d comunas para el jugador.\033[0m\n", MAX_COMUNAS_JUGADOR);
 		liberar_lista_comunas(sociedad);
 		liberar_biblioteca(biblioteca);
 		return 1;
 	}
 
-	printf("\n\033[32m  La sociedad ya esta lista. Tus primeras %d comunas son las tuyas.\033[0m\n", jugador->cantidad);
-
 	int turno = 1;
 	int sigue = 1;
 	while(turno <= TOPE_TURNOS && sigue){
-		printf("\n\033[33m  ────────────────────────────────────────\033[0m\n");
-		printf("\033[1;33m   ☀  Turno %d\033[0m\n", turno);
-		printf("\033[33m  ────────────────────────────────────────\033[0m\n\n");
-		sigue = paso_dia(sociedad, jugador, biblioteca);
+		sigue = paso_dia(sociedad, jugador, biblioteca, turno);
 		turno++;
 	}
 	
-	despedida();
+	tui_cerrar_partida(sigue, turno);
 	liberar_jugador(jugador);
 	liberar_lista_comunas(sociedad);
 	liberar_biblioteca(biblioteca);
+	tui_shutdown();
 	return 0;
 }
 	

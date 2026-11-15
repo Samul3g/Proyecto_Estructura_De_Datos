@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "jugador.h"
 #include "biblioteca.h"
 #include "busqueda.h"
 #include "utils.h"
 #include "simulacion.h"
+#include "tui/tui.h"
+#include "tui/flujo.h"
 
 /* Toma las primeras comunas de la lista, en el orden en que se imprimen.
 	Entrada: la sociedad
@@ -90,22 +93,146 @@ static struct persona* persona_con_menos_libros(struct lista_personas* lista) {
 	return elegida;
 }
 
+static void copiar_informe(struct string* origen, char* destino, int tope) {
+	int i = 0;
+	struct char_array* actual = NULL;
+	if (destino == NULL || tope <= 0) {
+		return;
+	}
+	if (origen != NULL) {
+		actual = origen->inicio;
+	}
+	while (actual != NULL && i < tope - 1) {
+		destino[i] = actual->caracter;
+		actual = actual->siguiente;
+		i++;
+	}
+	destino[i] = '\0';
+}
+
 /* Abre el catalogo de servicios, le ensena uno a la persona y cierra el archivo.
-	Entrada: la persona y cuantas personas viven en su comuna
+	Entrada: la persona, cuantas personas viven en su comuna y donde dejar el nombre
 	Salida: 1 si aprendio un servicio, 0 si no */
-static int aprender_desde_catalogo(struct persona* persona, int cantidad_personas) {
+static int aprender_desde_catalogo(struct persona* persona, int cantidad_personas, char* servicio, int tope) {
 	FILE* archivo = leer_archivo("servicios");
 	struct lista_archivo* catalogo = generar_lista_archivo(archivo);
 	fclose(archivo);
 
 	int aprendio = persona_aprender_servicio(persona, catalogo, cantidad_personas);
-	if (aprendio && persona->servicios != NULL && persona->servicios->inicio != NULL) {
-		printf("\033[32m  Aprendio el servicio \033[0m");
-		imprimirString(persona->servicios->inicio->recurso->nombre);
-		printf(".\n");
+	if (aprendio && servicio != NULL && persona->servicios != NULL && persona->servicios->inicio != NULL) {
+		copiar_informe(persona->servicios->inicio->recurso->nombre, servicio, tope);
 	}
 	liberar_lista_archivo(catalogo);
 	return aprendio;
+}
+
+/* Busca el texto y hace leer a quien lleva menos libros. No imprime.
+	Entrada: la comuna, la biblioteca, el texto y donde dejar el informe
+	Salida: 1 si el turno de lectura termino, 0 si falta un puntero o la busqueda fallo */
+int ejecutar_lectura(struct comuna* comuna, struct biblioteca* biblioteca, struct string* texto, struct informe_lectura* informe) {
+	struct resultado_busqueda* resultado;
+	struct persona* persona = NULL;
+	int leyo = 0;
+	int hay_libros = 0;
+
+	if (comuna == NULL || biblioteca == NULL || texto == NULL || informe == NULL) {
+		return 0;
+	}
+
+	memset(informe, 0, sizeof(*informe));
+	resultado = buscar_texto(biblioteca, texto);
+	if (resultado == NULL) {
+		informe->caso = LECTURA_FALLO;
+		return 0;
+	}
+
+	persona = persona_con_menos_libros(comuna->personas);
+	hay_libros = resultado->libros != NULL && resultado->libros->inicio != NULL;
+	if (persona != NULL && hay_libros) {
+		struct entrada_lista_archivo* libro = resultado->libros->inicio;
+		while (libro != NULL) {
+			if (persona_ya_leyo(persona, libro->nombre) == 0) {
+				leyo = persona_leer_libro(persona, libro->nombre);
+				if (leyo) {
+					copiar_informe(persona->nombre, informe->persona, (int)sizeof(informe->persona));
+					copiar_informe(libro->nombre, informe->libro, (int)sizeof(informe->libro));
+					informe->libros_leidos = persona->libros_leidos;
+				}
+				break;
+			}
+			libro = libro->siguiente;
+		}
+	}
+
+	if (persona == NULL) {
+		informe->caso = LECTURA_SIN_PERSONA;
+	} else if (hay_libros == 0) {
+		informe->caso = LECTURA_SIN_LIBROS;
+	} else if (leyo == 0) {
+		copiar_informe(persona->nombre, informe->persona, (int)sizeof(informe->persona));
+		informe->caso = LECTURA_YA_LEYO;
+	} else if (persona->libros_leidos % 3 == 0) {
+		int cantidad_personas = 0;
+		if (comuna->personas != NULL) {
+			cantidad_personas = largo_personas(comuna->personas);
+		}
+		if (aprender_desde_catalogo(persona, cantidad_personas, informe->servicio, (int)sizeof(informe->servicio))) {
+			informe->caso = LECTURA_APRENDIO;
+		} else {
+			informe->caso = LECTURA_OK;
+		}
+	} else {
+		informe->caso = LECTURA_OK;
+	}
+
+	liberar_resultado_busqueda(resultado);
+	return 1;
+}
+
+static void imprimir_informe_lectura(struct informe_lectura* informe) {
+	if (informe->caso == LECTURA_SIN_PERSONA) {
+		printf("\033[33m  Esa comuna no tiene personas para leer.\033[0m\n");
+	} else if (informe->caso == LECTURA_SIN_LIBROS) {
+		printf("\033[33m  Ningun libro contiene ese texto.\033[0m\n");
+	} else if (informe->caso == LECTURA_YA_LEYO) {
+		printf("\033[33m  %s ya leyo todos los libros de esta busqueda.\033[0m\n", informe->persona);
+	} else if (informe->caso == LECTURA_OK || informe->caso == LECTURA_APRENDIO) {
+		printf("\033[32m  %s lee \033[0m%s \033[2m(%d libros)\033[0m\n",
+			informe->persona, informe->libro, informe->libros_leidos);
+		if (informe->caso == LECTURA_APRENDIO) {
+			printf("\033[32m  Aprendio el servicio \033[0m%s.\n", informe->servicio);
+		}
+	}
+}
+
+static int lectura_clasica(struct jugador* jugador, struct biblioteca* biblioteca) {
+	struct informe_lectura informe;
+	struct string* texto;
+	int n;
+
+	if (jugador->cantidad < 1) {
+		return 1;
+	}
+
+	printf("\n\033[33m  Lectura\033[0m\n");
+	imprimir_comunas_jugador(jugador);
+	n = pedir_numero("\033[36m  ›\033[0m Elija el numero de tu comuna que va a leer: ", 1, jugador->cantidad);
+	if (n < 0) {
+		return 0;
+	}
+
+	printf("\033[36m  ›\033[0m Escriba el texto a buscar: ");
+	texto = linea_archivo(stdin);
+	if (texto == NULL) {
+		return 0;
+	}
+	if (ejecutar_lectura(jugador->comunas[n - 1], biblioteca, texto, &informe) == 0) {
+		liberar_string(texto);
+		return 0;
+	}
+	imprimir_informe_lectura(&informe);
+	liberar_string(texto);
+	return 1;
 }
 
 /* Una persona de una comuna del jugador busca texto y lee un solo libro.
@@ -116,65 +243,8 @@ int lectura_jugador(struct jugador* jugador, struct biblioteca* biblioteca) {
 	if (jugador == NULL || biblioteca == NULL) {
 		return 0;
 	}
-	if (jugador->cantidad < 1) {
-		return 1;
+	if (tui_es_tty()) {
+		return tui_lectura_jugador(jugador, biblioteca);
 	}
-
-	printf("\n\033[33m  Lectura\033[0m\n");
-	imprimir_comunas_jugador(jugador);
-	int n = pedir_numero("\033[36m  ›\033[0m Elija el numero de tu comuna que va a leer: ", 1, jugador->cantidad);
-	if (n < 0) {
-		return 0;
-	}
-
-	struct comuna* comuna = jugador->comunas[n - 1];
-	printf("\033[36m  ›\033[0m Escriba el texto a buscar: ");
-	struct string* texto = linea_archivo(stdin);
-	if (texto == NULL) {
-		return 0;
-	}
-
-	struct resultado_busqueda* resultado = buscar_texto(biblioteca, texto);
-	if (resultado == NULL) {
-		liberar_string(texto);
-		return 0;
-	}
-
-	struct persona* persona = NULL;
-	if (comuna != NULL) {
-		persona = persona_con_menos_libros(comuna->personas);
-	}
-
-	int leyo = 0;
-	if (persona != NULL && resultado->libros != NULL) {
-		struct entrada_lista_archivo* libro = resultado->libros->inicio;
-		while (libro != NULL) {
-			if (persona_ya_leyo(persona, libro->nombre) == 0) {
-				leyo = persona_leer_libro(persona, libro->nombre);
-				if (leyo) {
-					printf("\033[32m  ");
-					imprimirString(persona->nombre);
-					printf(" lee \033[0m");
-					imprimirString(libro->nombre);
-					printf(" \033[2m(%d libros)\033[0m\n", persona->libros_leidos);
-				}
-				break;
-			}
-			libro = libro->siguiente;
-		}
-	}
-
-	if (leyo == 0) {
-		printf("\033[33m  Nadie leyo un libro nuevo en esta busqueda.\033[0m\n");
-	} else if (persona->libros_leidos % 3 == 0) {
-		int cantidad_personas = 0;
-		if (comuna->personas != NULL) {
-			cantidad_personas = largo_personas(comuna->personas);
-		}
-		aprender_desde_catalogo(persona, cantidad_personas);
-	}
-
-	liberar_resultado_busqueda(resultado);
-	liberar_string(texto);
-	return 1;
+	return lectura_clasica(jugador, biblioteca);
 }
