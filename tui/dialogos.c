@@ -71,7 +71,12 @@ static void agregar_texto(char destino[][PROF_LARGO], int* cantidad, const char*
 }
 
 static void agregar_sprite(struct profesion* actual, const char* linea) {
+	const char* texto;
 	if (actual->nsprite >= PROF_LINEAS) {
+		return;
+	}
+	texto = saltar_espacio((char*)linea);
+	if (strncmp(texto, "Por:", 4) == 0) {
 		return;
 	}
 	snprintf(actual->sprite[actual->nsprite], PROF_ANCHO, "%s", linea);
@@ -206,10 +211,29 @@ static int nombre_cerca(const char* servicio, const char* clave) {
 	return 0;
 }
 
+static struct profesion* por_nombre(const char* nombre) {
+	for (int i = 0; i < profesiones_cantidad; i++) {
+		if (strcmp(profesiones[i].nombre, nombre) == 0) {
+			return &profesiones[i];
+		}
+	}
+	return NULL;
+}
+
+static int es_sin_profesion(const char* servicio);
+
 static struct profesion* buscar_profesion(const char* servicio) {
 	int mejor = -1;
 	int puntaje = 0;
+	struct profesion* sin_oficio;
 	cargar_profesiones();
+	if (es_sin_profesion(servicio)) {
+		sin_oficio = por_nombre("sin profesion");
+		if (sin_oficio != NULL) {
+			return sin_oficio;
+		}
+		return &profesiones[0];
+	}
 	for (int i = 0; i < profesiones_cantidad; i++) {
 		int ahora = nombre_cerca(servicio, profesiones[i].nombre);
 		if (ahora > puntaje) {
@@ -218,10 +242,9 @@ static struct profesion* buscar_profesion(const char* servicio) {
 		}
 	}
 	if (puntaje == 0) {
-		for (int i = 0; i < profesiones_cantidad; i++) {
-			if (strcmp(profesiones[i].nombre, "placeholder") == 0) {
-				return &profesiones[i];
-			}
+		sin_oficio = por_nombre("sin profesion");
+		if (sin_oficio != NULL) {
+			return sin_oficio;
 		}
 		return &profesiones[0];
 	}
@@ -239,17 +262,58 @@ static const char* elegir_linea(char lineas[][PROF_LARGO], int cantidad, char re
 	return lineas[aleatorio(0, cantidad - 1)];
 }
 
-static const char* con_dato(const char* molde, const char* dato) {
+static int es_sin_profesion(const char* servicio) {
+	if (servicio == NULL || servicio[0] == '\0') {
+		return 1;
+	}
+	return strcmp(servicio, "sin profesion") == 0
+		|| strcmp(servicio, "sin servicio") == 0
+		|| strcmp(servicio, "(sin nombre)") == 0;
+}
+
+/* Cambia [recurso], [servicio] y %s por los nombres. %s cuenta como el recurso.
+	Entrada: la frase, el recurso y el servicio
+	Salida: la frase ya armada. Se pisa en la proxima llamada */
+static const char* aplicar_marcas(const char* molde, const char* recurso, const char* servicio) {
+	const char* nombre_recurso = (recurso != NULL && recurso[0] != '\0') ? recurso : "eso";
+	const char* nombre_servicio = (servicio != NULL && servicio[0] != '\0' && es_sin_profesion(servicio) == 0) ? servicio : "sin profesion";
+	int usado = 0;
+	int queda = (int)sizeof(dialogo_buffer);
 	if (molde == NULL) {
 		return "";
 	}
-	if (dato == NULL) {
-		dato = "eso";
-	}
-	if (strstr(molde, "%s") == NULL) {
+	if (strstr(molde, "[recurso]") == NULL && strstr(molde, "[servicio]") == NULL && strstr(molde, "%s") == NULL) {
 		return molde;
 	}
-	snprintf(dialogo_buffer, sizeof(dialogo_buffer), molde, dato);
+	while (*molde != '\0' && queda > 1) {
+		const char* poner = NULL;
+		int saltar = 0;
+		if (strncmp(molde, "[recurso]", 9) == 0) {
+			poner = nombre_recurso;
+			saltar = 9;
+		} else if (strncmp(molde, "[servicio]", 10) == 0) {
+			poner = nombre_servicio;
+			saltar = 10;
+		} else if (strncmp(molde, "%s", 2) == 0) {
+			poner = nombre_recurso;
+			saltar = 2;
+		}
+		if (poner != NULL) {
+			while (*poner != '\0' && queda > 1) {
+				dialogo_buffer[usado] = *poner;
+				usado++;
+				queda--;
+				poner++;
+			}
+			molde += saltar;
+		} else {
+			dialogo_buffer[usado] = *molde;
+			usado++;
+			queda--;
+			molde++;
+		}
+	}
+	dialogo_buffer[usado] = '\0';
 	return dialogo_buffer;
 }
 
@@ -264,8 +328,8 @@ const char* dialogo_de_servicio(const char* servicio) {
 /* Chiste corto, tomado de las frases del archivo.
 	Entrada: ninguna
 	Salida: la frase */
-const char* dialogo_meme(void) {
-	struct profesion* oficio = buscar_profesion(NULL);
+const char* dialogo_meme(const char* servicio) {
+	struct profesion* oficio = buscar_profesion(servicio);
 	return elegir_linea(oficio->frases, oficio->nfrases, oficio->frases, oficio->nfrases);
 }
 
@@ -275,7 +339,7 @@ const char* dialogo_meme(void) {
 const char* dialogo_queja_de(const char* servicio, const char* recurso) {
 	struct profesion* oficio = buscar_profesion(servicio);
 	const char* molde = elegir_linea(oficio->quejas, oficio->nquejas, oficio->frases, oficio->nfrases);
-	return con_dato(molde, recurso);
+	return aplicar_marcas(molde, recurso, servicio);
 }
 
 /* Queja usando el placeholder.
@@ -296,17 +360,17 @@ const char* dialogo_pedido_lectura(const char* servicio) {
 /* Sugiere regalar un bien que sobra.
 	Entrada: el nombre del bien, o NULL
 	Salida: la frase */
-const char* dialogo_sugerencia(const char* bien) {
-	struct profesion* oficio = buscar_profesion(NULL);
+const char* dialogo_sugerencia(const char* servicio, const char* bien) {
+	struct profesion* oficio = buscar_profesion(servicio);
 	const char* molde = elegir_linea(oficio->frases, oficio->nfrases, oficio->frases, oficio->nfrases);
-	return con_dato(molde, bien);
+	return aplicar_marcas(molde, bien, servicio);
 }
 
 /* Comentario suelto al cerrar el dia.
 	Entrada: ninguna
 	Salida: la frase */
-const char* dialogo_cierre_dia(void) {
-	return dialogo_meme();
+const char* dialogo_cierre_dia(const char* servicio) {
+	return dialogo_meme(servicio);
 }
 
 /* Lo que dice alguien al mudarse.

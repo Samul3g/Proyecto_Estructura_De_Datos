@@ -71,7 +71,14 @@ static void copiar_tope(char* destino, int tope, const char* origen) {
 }
 
 static void agregar_linea(struct arte_bloque* bloque_arte, const char* linea) {
+	const char* texto = linea;
 	if (bloque_arte->cantidad >= ARTE_LINEAS) {
+		return;
+	}
+	while (*texto == ' ' || *texto == '\t') {
+		texto++;
+	}
+	if (strncmp(texto, "Por:", 4) == 0) {
 		return;
 	}
 	copiar_tope(bloque_arte->linea[bloque_arte->cantidad], ARTE_ANCHO, linea);

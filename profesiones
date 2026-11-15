@@ -1,3 +1,22 @@
+Profesion: sin profesion
+   .---.
+  ( o_O )
+   |   |
+  /|   |\
+n/
+Frases:
+Seré el mejor entrenador pokemon
+Cuac, cuac, cuac!
+Despempleado por profesion
+Quejas:
+Nos falta [recurso], y yo ni oficio tengo para inventarmelo
+Con tan poco [servicio], no se ni por donde empezar
+Lectura:
+Quiero leer un poco de cualquier cosa, a ver si encuentro oficio
+Dejame aprender algo, que todavia no se que soy
+Despedida:
+Me voy sin oficio, a ver si en la otra comuna encuentro uno
+A caminar, que aqui no me quedo
 Profesion: recoleccion de organicos
    .---.
   ( ^_^ )
@@ -7,18 +26,18 @@ Profesion: recoleccion de organicos
 Por:LGB
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Como dicen... pajaro que madruga se come el mejor gusano
+Nos vendrían bien menos personas y más manzanas
+No te vayas a caer con una cascara de banana
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], así como van a comer los gusanos!?
+Con tan poco [servicio], no voy a poder bailar el gusano!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre gusanos
+Dejame aprender de reciduos organicos
 Despedida:
-placer_holder
-placer_holder
+No hay gusano que se quede en la misma manzana!
+A conocer nuevos gusanos!
 Profesion: mantenimiento de areas verdes
     _         ___
   (^_^)    .-.   .-.
@@ -30,18 +49,18 @@ Profesion: mantenimiento de areas verdes
 Por:jgs
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+A quien buen arbol se arrima, buena sombra le cobija
+El pasto siempre es mas verde cuando todos lo regamos
+Cuidado por donde pisas, que acabo de podar aqui
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi el monte se nos va a comer vivos!
+Con tan poco [servicio], no voy a poder ni afilar las tijeras!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre botanica
+Dejame aprender de poda y jardineria
 Despedida:
-placer_holder
-placer_holder
+Me voy a plantar nuevos horizontes!
+A echar raices a otro lado!
 Profesion: biblioteca comunitaria
  .---.  .=======.
  (o_O)  |       |
@@ -52,18 +71,18 @@ Profesion: biblioteca comunitaria
 Por:Stanislaw
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Shhh... hasta las letras estan durmiendo la siesta
+Un libro abierto es un cerebro que habla
+No dobles las esquinas de las paginas, por favor!
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi como vamos a alimentar las mentes!?
+Con tan poco [servicio], se me van a podrir todos los tomos!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre literatura clasica
+Dejame aprender de historia universal
 Despedida:
-placer_holder
-placer_holder
+Hora de cerrar este capitulo!
+Nos vemos en la proxima pagina!
 Profesion: taller de reparaciones
    .---.    ______
   ( -_- )  |_. .--\
@@ -73,18 +92,18 @@ Profesion: taller de reparaciones
 Por:Rasimus
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Si no esta roto, no lo arregles... pero traelo igual por si acaso
+Todo se soluciona con un buen golpe o cinta aislante
+Siempre me sobra un tornillo cuando armo algo, es normal
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi no puedo ni apretar una tuerca!
+Con tan poco [servicio], este taller se va a oxidar!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre mecanica basica
+Dejame aprender de electronica y circuitos
 Despedida:
-placer_holder
-placer_holder
+Voy a ajustar unos asuntos pendientes!
+Nos vemos cuando se te rompa algo mas!
 Profesion: comedor comunitario
    .---.    :)( :
   ( ^_^ )  :----:
@@ -94,18 +113,18 @@ Profesion: comedor comunitario
 Por:hjw
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Barriga llena, corazon contento
+Donde comen dos, comen tres si le echamos mas agua a la sopa
+El ingrediente secreto siempre es una pizca de paciencia (y un print en linea 84)
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi como vamos a llenar las ollas!?
+Con tan poco [servicio], se nos va a enfriar el caldo!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre nutricion comunitaria
+Dejame aprender de recetas economicas
 Despedida:
-placer_holder
-placer_holder
+A recoger los platos, que ya acabo el turno!
+Nos vemos a la hora del postre!
 Profesion: huerto urbano compartible
    .---.      _ _
   ( ^_^ )  .-( : )-.
@@ -115,18 +134,18 @@ Profesion: huerto urbano compartible
 Por:jgs
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Quien siembra vientos recoge tempestades, pero yo prefiero chayotes
+La paciencia es amarga, pero su fruto es dulce
+Hablarle a las plantas ayuda a que crezcan, me lo dijeron en Fores
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi se nos van a secar los brotes y hasta los calzones!
+Con tan poco [servicio], las plagas van a hacer fiesta!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre agricultura urbana
+Dejame aprender de ciclos de cultivo
 Despedida:
-placer_holder
-placer_holder
+Hora de cosechar lo sembrado en otro lado!
+Me voy a regar otros proyectos!
 Profesion: limpieza de espacios comunes
    .---.     |
   ( o_O )    |
@@ -136,18 +155,18 @@ Profesion: limpieza de espacios comunes
 Por:anom
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Escoba nueva barre bien, pero la vieja conoce los huequitos
+No es mas limpio el que mas limpia, sino el que menos ensucia
+Brilla tanto el piso que me puedo peinar mirando hacia abajo
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi vamos a tener mas polvo que windows!
+Con tan poco [servicio], no voy a poder a dejarlo clean como rice recien hecho!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre higiene ambiental
+Dejame aprender de productos biodegradables
 Despedida:
-placer_holder
-placer_holder
+Me voy antes de que alguien pise lo recien trapeado!
+A barrer con las dudas en otra parte!
 Profesion: prestamo de herramientas
    .---.    _____
   ( o_O )  |  _  |
@@ -157,18 +176,18 @@ Profesion: prestamo de herramientas
 Por:LGB
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+El que presta un taladro pierde un amigo... si no lo devuelve limpio
+Cada llave tiene su tuerca, y cada vecino su caja de herramientas
+A veces me pide 1 tornillo y me devuelven 10... es normal
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi el inventario va a quedar vacio!
+Con tan poco [servicio], no puedo ni mantener el orden en los estantes!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre mantenimiento de equipos
+Dejame aprender de catalogacion y ferreteria
 Despedida:
-placer_holder
-placer_holder
+Voy a guardar el martillo por hoy!
+Nos vemos cuando necesites una mano extra!
 Profesion: centro de reciclaje
    .---.    +----+
   ( -_- )  /|   /|
@@ -179,18 +198,18 @@ Profesion: centro de reciclaje
 Por:anom
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+La basura de unos es el tesoro de otros
+Reducir, reutilizar, reciclar... y no mezclar el carton mojado!
+Aplastar las botellas ahorra espacio y libera el estres
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi se nos va a acumular todo el plastico!
+Con tan poco [servicio], no damos abasto para separar tanto material!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre economia circular
+Dejame aprender de clasificacion de polimeros
 Despedida:
-placer_holder
-placer_holder
+Hora de darle una segunda vida a mi dia!
+Nos vemos en el proximo ciclo!
 Profesion: cuidado infantil compartido
    .---.        __
   ( ^_^ )      (  )
@@ -200,18 +219,18 @@ Profesion: cuidado infantil compartido
 Por:gpyy
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Se necesita todo un pueblo para criar a un niño
+Si estan muy callados, seguro estan haciendo diabluras
+Cinco minutos mas de juego y nos vamos a lavar las manos
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi como entretenemos a tantos terremotos!?
+Con tan poco [servicio], no me alcanzan los ojos para vigilarlos a todos!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre pedagogia infantil
+Dejame aprender de juegos cooperativos
 Despedida:
-placer_holder
-placer_holder
+Hora de la siesta, me retiro en puntitas!
+Nos vemos cuando bajen las revoluciones!
 Profesion: centro de acopio
    .---.        _
   ( o_O )     .-|=======-.
@@ -221,18 +240,18 @@ Profesion: centro de acopio
 Por:jgs
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Grano a grano se llena el granero de la comunidad
+Orden en los estantes, paz en el vecindario
+Lo que hoy guardamos, mañana nos salva del apuro
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi no podemos clasificar las donaciones!
+Con tan poco [servicio], se nos van a humedecer las cajas!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre logistica comunitaria
+Dejame aprender de conservacion de alimentos
 Despedida:
-placer_holder
-placer_holder
+Cierro el porton y me llevo la llave!
+Nos vemos en la proxima entrega!
 Profesion: lavanderia comunal
    .---.    /.\__/.
   ( -_- )  |      |
@@ -242,18 +261,18 @@ Profesion: lavanderia comunal
 Por:jgs
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+La ropa sucia se lava en casa... o aqui mientras chismeamos
+Revisa los bolsillos antes de meter el pantalon, ya encontre tres facturas hoy
+Blanco con blanco, color con color, no quiero accidentes rosados
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi no sale ni la mancha mas sencilla!
+Con tan poco [servicio], se nos van a acumular las cestas hasta el techo!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre cuidado textil
+Dejame aprender de jabones ecologicos
 Despedida:
-placer_holder
-placer_holder
+Me voy antes de que empiece a llover y haya que bajar la ropa!
+A centrifugar ideas a otro lado!
 Profesion: red de wifi comunitaria
    .---.      .-.
   ( o_O )    (: :)
@@ -263,18 +282,18 @@ Profesion: red de wifi comunitaria
 Por:LGB
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Ya probaste apagando y volviendo a prender el router?
+No, no se commo prender la impresora.... 7_7
+Por favor, prueba usar conexion por cable!
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi la conexion va a ir a pedales!
+Con tan poco [servicio], nos vamos a quedar sin cobertura en todo el barrio!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre redes inalambricas
+Dejame aprender de telecomunicaciones libres
 Despedida:
-placer_holder
-placer_holder
+Me desconecto por hoy, cambio y fuera!
+Nos vemos cuando vuelva la señal!
 Profesion: vigilancia vecinal
    .---.    _______
   ( -_- )  |__/-\[]|
@@ -284,18 +303,18 @@ Profesion: vigilancia vecinal
 Por:anom
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+No dejara ningun empleado de Microslop pasar por aqui!
+Mas vale prevenir que lamentar, y mas vale saludar que sospechar
+El mejor sistema de seguridad es un vecino atento
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi no podemos cubrir el turno de noche!
+Con tan poco [servicio], nos vamos a quedar a oscuras en la ronda!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre prevencion comunitaria
+Dejame aprender de primeros auxilios y seguridad
 Despedida:
-placer_holder
-placer_holder
+Cambio de guardia, todo sin novedad!
+Sigo mi patrulla por otros rumbos!
 Profesion: intercambio de semillas
    .---.        _
   ( ^_^ )     _/-\_
@@ -305,18 +324,18 @@ Profesion: intercambio de semillas
 Por:jgs
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+En cada semilla duerme un bosque entero esperando despertar
+No, no doy los numeros de loteria aleatorios...
+Guardar semillas es guardar la memoria de la tierra
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi no podemos etiquetar las plantas!
+Con tan poco [servicio], se nos van a echar a perder los sobres!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre agroecologia y germoplasma
+Dejame aprender de polinizacion abierta
 Despedida:
-placer_holder
-placer_holder
+Me voy a esparcir buenas ideas por el mundo!
+Nos vemos en la proxima siembra!
 Profesion: taller de carpinteria
    .---.    ______
   ( -_- )  |_. .--\
@@ -326,18 +345,18 @@ Profesion: taller de carpinteria
 Por:Rasimus
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Mide dos veces y corta una sola vez, que la madera no estira
+El olor a aserrin por la mañana es mejor que el cafe
+Si queda chueco, decimos que es una feature, no un bug
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi no puedo ni lijar una tabla!
+Con tan poco [servicio], se nos van a desafilar todas las sierras!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre ebanisteria
+Dejame aprender de tipos de madera y ensambles
 Despedida:
-placer_holder
-placer_holder
+Me sacudo el aserrin y me retiro!
+Nos vemos cuando haya que clavar otro proyecto!
 Profesion: sala de eventos y reuniones
    .---.   ______________
   ( ^_^ ) /              /
@@ -347,18 +366,18 @@ Profesion: sala de eventos y reuniones
 Por:VK
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Acomoden las sillas en circulo, que aqui todos tenemos voz
+Que levante la mano el que quiera pedir la palabra... y el que quiera cafe
+De las buenas asambleas salen los mejores acuerdos
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi no podemos organizar la proxima junta!
+Con tan poco [servicio], nos vamos a quedar sin espacio para todos!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre facilitacion de grupos
+Dejame aprender de resolucion de conflictos
 Despedida:
-placer_holder
-placer_holder
+Se levanta la sesion por hoy!
+Nos vemos en la proxima asamblea!
 Profesion: gestion de compostaje
    .---.        ..
   ( o_O )  __..-.||.-..__
@@ -368,18 +387,18 @@ Profesion: gestion de compostaje
 Por:LGB
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Ni carnes ni leches, que despues esto huele a rayos!
+Se toma lo malo y se hace bueno
+Con un poco de aire y tiempo, todo vuelve a ser tierra fertil
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi la pila no va a agarrar temperatura!
+Con tan poco [servicio], no puedo ni voltear el abono!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre microbiologia del suelo
+Dejame aprender de compostaje termofilo
 Despedida:
-placer_holder
-placer_holder
+Me voy a airear un poco la cabeza!
+Nos vemos cuando la tierra este lista!
 Profesion: apoyo escolar para niños
  .---.   .===========.   .---.
  (o_O)   |     |     |   (^_^)
@@ -390,18 +409,18 @@ Profesion: apoyo escolar para niños
 Por:Stanislaw
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+No hay preguntas tontas, solo dudas que quieren ser resueltas
+Dos mas dos son cuatro, cuatro y dos son seis... en que estaba?
+Vamos paso a paso, que nadie nacio sabiendolo todo
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi como vamos a hacer las tareas!?
+Con tan poco [servicio], nos vamos a quedar sin lapices ni cuadernos!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre didactica creativa
+Dejame aprender de tecnicas de estudio
 Despedida:
-placer_holder
-placer_holder
+Se acabo la clase por hoy, a jugar!
+Nos vemos mañana con la tarea hecha!
 Profesion: transporte compartido
              __
   .--.      <__)   .---.
@@ -412,15 +431,15 @@ Profesion: transporte compartido
 Por:hjw
 n/
 Frases:
-placer_holder
-placer_holder
-placer_holder
+Sube al frente si vas a elegir la musica del viaje
+Caben cuatro apretados o tres muy comodos, ustedes deciden
+El camino se hace mas corto cuando se comparte el volante y la charla
 Quejas:
-placer_holder
-placer_holder
+Nos falta [recurso], asi no llegamos ni a la esquina!
+Con tan poco [servicio], se nos van a pinchar las ganas de viajar!
 Lectura:
-placer_holder
-placer_holder
+Quiero leer un poco sobre movilidad sostenible
+Dejame aprender de mecanica preventiva
 Despedida:
-placer_holder
-placer_holder
+Proxima parada: mi casa!
+Nos vemos en la siguiente ruta!

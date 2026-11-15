@@ -92,9 +92,8 @@ struct lista_personas* generar_lista_personas(struct lista_archivo* lista_archiv
         if (aleatorio(0, 9) != 0) {
             if (servicio != NULL) {
                 agregar_recurso(persona->servicios, copiar_recurso(servicio->recurso));
-                servicio = servicio->siguiente;
-                if (servicio == NULL) {
-                    servicio = servicios->inicio;
+                if (servicio != NULL) {
+                    servicio = servicio->siguiente;
                 }
             }
         }

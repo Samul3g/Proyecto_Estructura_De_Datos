@@ -141,7 +141,15 @@ static void linea_carencia(struct comuna* comuna, int indice) {
 	}
 	copiar_nombre(falta->nombre, recurso, (int)sizeof(recurso));
 	if (indice != cache_indice || strcmp(recurso, cache_recurso) != 0) {
-		snprintf(cache_frase, sizeof(cache_frase), "%s", dialogo_queja(recurso));
+		struct persona* persona = persona_azar(comuna);
+		struct nodo_recurso* oficio = servicio_nacimiento(persona);
+		char servicio[96];
+		if (oficio == NULL) {
+			snprintf(servicio, sizeof(servicio), "sin profesion");
+		} else {
+			copiar_nombre(oficio->nombre, servicio, (int)sizeof(servicio));
+		}
+		snprintf(cache_frase, sizeof(cache_frase), "%s", dialogo_queja_de(servicio, recurso));
 		snprintf(cache_recurso, sizeof(cache_recurso), "%s", recurso);
 		cache_indice = indice;
 	}
@@ -243,7 +251,7 @@ static void ficha_persona(struct persona* persona) {
 	struct nodo_recurso* oficio = servicio_nacimiento(persona);
 	copiar_nombre(persona != NULL ? persona->nombre : NULL, nombre, (int)sizeof(nombre));
 	if (oficio == NULL) {
-		snprintf(servicio, sizeof(servicio), "sin servicio");
+		snprintf(servicio, sizeof(servicio), "sin profesion");
 	} else {
 		copiar_nombre(oficio->nombre, servicio, (int)sizeof(servicio));
 	}
@@ -287,7 +295,7 @@ static void pantalla_ciudadano(struct comuna* comuna, int rol) {
 			nodo = nodo->siguiente;
 		}
 		copiar_nombre(bien != NULL ? bien->nombre : NULL, bien_nombre, (int)sizeof(bien_nombre));
-		snprintf(frase, sizeof(frase), "%s", dialogo_sugerencia(bien != NULL ? bien_nombre : NULL));
+		snprintf(frase, sizeof(frase), "%s", dialogo_sugerencia(oficio != NULL ? servicio : NULL, bien != NULL ? bien_nombre : NULL));
 	} else {
 		struct nodo_recurso* falta = primera_carencia(comuna);
 		if (falta != NULL) {
@@ -295,7 +303,7 @@ static void pantalla_ciudadano(struct comuna* comuna, int rol) {
 			copiar_nombre(falta->nombre, recurso, (int)sizeof(recurso));
 			snprintf(frase, sizeof(frase), "%s", dialogo_queja_de(oficio != NULL ? servicio : NULL, recurso));
 		} else {
-			snprintf(frase, sizeof(frase), "%s", dialogo_meme());
+			snprintf(frase, sizeof(frase), "%s", dialogo_meme(oficio != NULL ? servicio : NULL));
 		}
 	}
 	printf("\n  \"%s\"\n", frase);
@@ -510,7 +518,11 @@ static void lista_personas_tui(struct comuna* comuna) {
 			char extra[80];
 			char servicio[64];
 			copiar_nombre(persona != NULL ? persona->nombre : NULL, nombre, (int)sizeof(nombre));
-			copiar_nombre(oficio != NULL ? oficio->nombre : NULL, servicio, (int)sizeof(servicio));
+			if (oficio == NULL) {
+				snprintf(servicio, sizeof(servicio), "sin profesion");
+			} else {
+				copiar_nombre(oficio->nombre, servicio, (int)sizeof(servicio));
+			}
 			snprintf(extra, sizeof(extra), "   %s", servicio);
 			widget_fila(i == cursor, nombre, extra);
 		}
@@ -541,7 +553,7 @@ static void lista_personas_tui(struct comuna* comuna) {
 			snprintf(cita, sizeof(cita), "%s", dialogo_de_servicio(servicio));
 			meme[0] = '\0';
 			if (aleatorio(0, 2) == 0) {
-				snprintf(meme, sizeof(meme), "%s", dialogo_meme());
+				snprintf(meme, sizeof(meme), "%s", dialogo_meme(servicio));
 			}
 			hablando = 1;
 		}
@@ -1091,7 +1103,12 @@ void tui_linea_postdia(struct jugador* jugador) {
 	}
 	comuna = jugador->comunas[aleatorio(0, jugador->cantidad - 1)];
 	persona = persona_azar(comuna);
-	snprintf(frase, sizeof(frase), "%s", dialogo_cierre_dia());
+	{
+		struct nodo_recurso* oficio = servicio_nacimiento(persona);
+		char servicio[96];
+		copiar_nombre(oficio != NULL ? oficio->nombre : NULL, servicio, (int)sizeof(servicio));
+		snprintf(frase, sizeof(frase), "%s", dialogo_cierre_dia(oficio != NULL ? servicio : NULL));
+	}
 	tui_cls();
 	widget_titulo("Cierra el dia");
 	printf("\n");
