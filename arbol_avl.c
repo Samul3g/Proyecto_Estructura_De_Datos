@@ -9,13 +9,27 @@
 /* Calcula el factor de balance: altura izquierda - altura derecha
 	Entrada: el nodo
 	Salida: el factor */
-int calcular_factor_balance(struct nodo_arbol_avl* nodo) {
+static int calcular_factor_balance(struct nodo_arbol_avl* nodo) {
 	
 	if (nodo == NULL) {
 		return 0;
 	}
 	
-	return nodo->izquierdo->altura - nodo->derecho->altura;
+	int altura_izq;
+	int altura_der;
+	
+	if (nodo->izquierdo == NULL){
+		altura_izq = 0;
+	}else{
+			altura_izq = nodo->izquierdo->altura;
+	}
+	
+	if(nodo->derecho == NULL){
+			altura_der = 0;
+	}else{
+			altura_der = nodo->derecho->altura;
+	}
+	return altura_izq - altura_der;
 }
 
 /* Actualiza la altura de un nodo 
@@ -23,7 +37,33 @@ int calcular_factor_balance(struct nodo_arbol_avl* nodo) {
  * Salida: ninguna */
 static void actualizar_altura(struct nodo_arbol_avl* nodo) {
 	
-	nodo->altura = 1 + mayor(nodo->izquierdo->altura, nodo->derecho->altura);
+	int altura_der;
+	int altura_izq;
+	int mayor;
+	
+	if(nodo->izquierdo == NULL){
+			altura_izq = 0;
+	}else{
+			altura_izq = nodo->izquierdo->altura;
+	}
+	
+	if(nodo->derecho == NULL){
+			altura_der = 0
+	}else{
+			altura_der = nodo->derecho->altura;
+	}
+	
+	if(altura_izq > altura_der){
+		mayor = altura_izq;
+	
+	}else if(altura_der > altura_izq){
+		mayor = altura_der;
+	
+	}else{
+		mayor = 0;
+	}
+	
+	nodo->altura = 1 + mayor;
 
 }
 
@@ -32,7 +72,7 @@ static void actualizar_altura(struct nodo_arbol_avl* nodo) {
 /* Hace una rotacion hacia la derecha de un nodo
  * Entrada: nodo arbol avl
  * Salida: nueva raiz del subarbol */
-struct nodo_arbol_avl* rotar_derecha(struct nodo_arbol_avl* y) {
+static struct nodo_arbol_avl* rotar_derecha(struct nodo_arbol_avl* y) {
 	
 	struct nodo_arbol_avl* x = y->izquierdo;
 	struct nodo_arbol_avl* b = x->derecho;
@@ -49,7 +89,7 @@ struct nodo_arbol_avl* rotar_derecha(struct nodo_arbol_avl* y) {
 /* Hace una rotacion hacia la izquierda de un nodo
  * Entrada: nodo arbol avl
  * Salida: nueva raiz del subarbol */
-struct nodo_arbol_avl* rotar_izquierda(struct nodo_arbol_avl* x) {
+static struct nodo_arbol_avl* rotar_izquierda(struct nodo_arbol_avl* x) {
 	
 	struct nodo_arbol_avl* y = x->derecho;
 	struct nodo_arbol_avl* b = y->izquierdo;
@@ -70,11 +110,11 @@ static struct nodo_arbol_avl* balancear(struct nodo_arbol_avl* nodo) {
 	
 	actualizar_altura(nodo);
 	
-	int fb = factor_balance(nodo);
+	int fb = calcular_factor_balance(nodo);
  
 	if (fb > 1) { // cargado a la izquierda
 		
-		if (factor_balance(nodo->izquierdo) < 0) { // caso izquierda-derecha
+		if (calcular_factor_balance(nodo->izquierdo) < 0) { // caso izquierda-derecha
 			nodo->izquierdo = rotar_izquierda(nodo->izquierdo);
 		}
 		
@@ -83,7 +123,7 @@ static struct nodo_arbol_avl* balancear(struct nodo_arbol_avl* nodo) {
 	
 	if (fb < -1) { // cargado a la derecha
 	
-		if (factor_balance(nodo->derecho) > 0) { // caso derecha-izquierda
+		if (calcular_factor_balance(nodo->derecho) > 0) { // caso derecha-izquierda
 			nodo->derecho = rotar_derecha(nodo->derecho);
 		}
 	
@@ -97,7 +137,7 @@ static struct nodo_arbol_avl* balancear(struct nodo_arbol_avl* nodo) {
 /* Insercion recursiva. 
  * Entradas:nodo, nombre, ruta, resultado
  * Salida: la raiz (posiblemente nueva) del subarbol */
-static struct nodo_arbol_avl* insertar_nodo(struct nodo_avl* nodo, struct string* nombre, const char* ruta, int* resultado) {
+static struct nodo_arbol_avl* insertar_nodo(struct nodo_arbol_avl* nodo, struct string* nombre, const char* ruta, int* resultado) {
 	
 	if (nodo == NULL) {
 		
@@ -109,7 +149,7 @@ static struct nodo_arbol_avl* insertar_nodo(struct nodo_avl* nodo, struct string
 	
 	}
  
-	int cmp = comparar_strings(nombre, nodo->nombre);
+	int cmp = comparar_strings(nombre, nodo->titulo_libro);
 	
 	if (cmp == -1) {
 		
@@ -149,7 +189,7 @@ static void liberar_nodos(struct nodo_arbol_avl* nodo) {
 /* Imprime el arbol o subarbol a partir de su nodo raiz
  * Entradas: nodo raiz, nivel en qu esta la raiz
  * Salidas: nada */
-void imprimir_nodo(struct nodo_arbol_avl* nodo, int nivel) {
+static void imprimir_nodo(struct nodo_arbol_avl* nodo, int nivel) {
 	
 	if (nodo == NULL) {
 		return;
@@ -163,7 +203,7 @@ void imprimir_nodo(struct nodo_arbol_avl* nodo, int nivel) {
 	
 	imprimirString(nodo->nombre);
 	
-	printf(" (h=%d, fb=%d)\n", nodo->altura, factor_balance(nodo));
+	printf(" (h=%d, fb=%d)\n", nodo->altura, calcular_factor_balance(nodo));
 	
 	imprimir_nodo(nodo->izquierdo, nivel + 1);
 }

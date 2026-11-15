@@ -126,19 +126,20 @@ float calcular_necesidad_local(struct comuna* comuna){
  * propios y de las dos comuna siguientes y anteriores
  * Entradas: nodo_lista_comunas
  * Salidas: indice de necesidad */
-float calcular_necesidad(struct nodo_lista_comunas* nodo_lista_comunas){
-	if(nodo_lista_comunas == NULL){
+float calcular_necesidad(struct nodo_lista_comunas* nodo){
+	
+	if(nodo == NULL){
 		return 0;
 	}
 	
 	struct nodo_lista_comunas* comunas_tomar_cuenta[5] = {
-		nodo_lista_comunas,
+		nodo,
 
-		nodo_lista_comunas->anterior,
-		nodo_lista_comunas->anterior->anterior,
+		nodo->anterior,
+		nodo->anterior->anterior,
 		
-		nodo_lista_comunas->siguiente,
-		nodo_lista_comunas->siguiente->siguiente
+		nodo->siguiente,
+		nodo->siguiente->siguiente
 	};
 	
 	float suma_necesidad_vecinas = 0;
@@ -169,6 +170,7 @@ float calcular_necesidad(struct nodo_lista_comunas* nodo_lista_comunas){
 	float promedio_insatisfaccion_vecinas = suma_insatisfaccion_vecinas / contadas;
 	
 	float diferencia = comuna->reciprocidad - 0.5;
+	
 	if(diferencia < 0){
 		diferencia = -diferencia;
 	}
@@ -189,8 +191,10 @@ float calcular_necesidad(struct nodo_lista_comunas* nodo_lista_comunas){
 
 	if(resultado < 0.0){
 		resultado = 0.0;
+	
 	}else if(resultado > 100.0){
 		resultado = 100.0;
+	
 	}
 	
 	
@@ -240,7 +244,11 @@ float calcular_satisfaccion(struct nodo_lista_comunas* nodo_lista_comunas){
 			contadas++;
 		}
 	}
-
+	
+	if(contadas == 0){
+			return 0;
+	}
+	
 	float promedio = suma / contadas;
 	float resultado = 100.0 - promedio;
 
@@ -298,7 +306,7 @@ int calcular_indice_sociedad(struct lista_comunas* sociedad){
     }
     
     //Calcular reciprocidad en todas
-    calcular_reciprocidad(actual->comuna);
+    calcular_indice_reciprocidad(actual->comuna);
     actual = actual->siguiente;
     
     while(actual != inicio){
@@ -317,7 +325,12 @@ int calcular_indice_sociedad(struct lista_comunas* sociedad){
     
     //Calcular necesidad en todas
     calcular_necesidad(actual);
-
+	actual = actual->siguiente;
+	
+	while(actual != inicio){
+		calcular_necesidad(actual);
+		actual = actual->siguiente;
+	}
     
     return 1;
 }

@@ -49,6 +49,6 @@ struct nodo_recurso* crear_recurso_desde_linea(struct string* linea, int cantida
 /* Compara dos strings
 	Entrada: los dos strings
 	Salida: -1 si a < b, 0 si son iguales, 1 si a > b */
-static int comparar_strings(struct string* a, struct string* b)
+int comparar_strings(struct string* a, struct string* b)
 
 #endif

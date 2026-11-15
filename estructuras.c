@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "estructuras.h"
 #include "utils.h"
+
 
 
 struct lista_archivo* crear_lista_archivo(){
@@ -636,7 +638,7 @@ int largo_recurso(struct lista_recursos* lista) {
 struct arbol_avl* crear_arbol_avl() {
     struct arbol_avl* arbol_avl = calloc(1, sizeof(struct arbol_avl));
     
-    arbol_avl->inicio = NULL;
+    arbol_avl->raiz = NULL;
     
     return arbol_avl;
 }
@@ -644,14 +646,14 @@ struct arbol_avl* crear_arbol_avl() {
 /* Crea un nodo de un arbol AVL
  * Entradas: nombre del libro y la ruta
  * Salidas: nodo del arbol*/
-struct nodo_arbol_avl* crear_nodo_avl(struct string nombre, const char* ruta){
+struct nodo_arbol_avl* crear_nodo_avl(struct string* nombre, const char* ruta){
 	struct nodo_arbol_avl* nodo = calloc(1, sizeof(struct nodo_arbol_avl));
 	
 	if(nodo == NULL){
 			return NULL;
 	}	
 	
-	nodo->ruta == calloc(strlen(ruta) + 1);
+	nodo->ruta = calloc(1, strlen(ruta));
 	
 	if(nodo->ruta == NULL){
 			free(nodo);
@@ -679,9 +681,9 @@ struct arbol_chaflaneado* crear_arbol_chaflaneado(){
 /* Crea un nodo del arbol chaflaneado
  * Entradas: texto (clave), lista de libros
  * Salidas: el nodo */
-struct nodo_chaflaneado* crear_nodo_chaflaneado(struct String* texto, struct lista_archivo libros){
+struct nodo_chaflaneado* crear_nodo_chaflaneado(struct string* texto, struct lista_archivo libros){
 	
-	struct nodo_chaflaneado* nodo = calloc(1, sizeof(nodo_chaflaneado));
+	struct nodo_chaflaneado* nodo = calloc(1, sizeof(struct nodo_chaflaneado));
 	
 	nodo->texto = texto;
 	nodo->libros = libros;

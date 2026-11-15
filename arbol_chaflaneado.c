@@ -7,7 +7,7 @@
 /* Imprime el nombre de un paso y el nodo que sube, solo si mostrar_pasos esta activo
  * Entrada: el arbol, el nombre del paso y el nodo
  * Salida: impresion en consola */
-void anunciar_paso(struct arbol_chaflaneado* arbol, const char* paso, struct nodo_chaflaneado* x) {
+static void anunciar_paso(struct arbol_chaflaneado* arbol, const char* paso, struct nodo_chaflaneado* x) {
 	if (arbol->mostrar_pasos) {
 		printf("    %s con \"", paso);
 		imprimirString(x->texto);
@@ -19,24 +19,42 @@ void anunciar_paso(struct arbol_chaflaneado* arbol, const char* paso, struct nod
  * Si x es hijo izquierdo es una rotacion a la derecha; si es hijo derecho, a la izquierda.
  * Entrada: el arbol y el nodo x (no puede ser la raiz)
  * Salida: nada (x queda donde estaba su padre) */
-void rotar(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
+static void rotar(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
 	
 	struct nodo_chaflaneado* p = x->padre;
 	struct nodo_chaflaneado* a = p->padre;
  
 	if (x == p->izquierdo) {
+		
 		p->izquierdo = x->derecho; 
+		
+		if(x->derecho != NULL){
+				x->derecho->padre = p;
+		}
+		
 		x->derecho = p;
+	
 	} else {
+		
 		p->derecho = x->izquierdo;
+		
+		if(x->izquierdo != NULL){
+			x->izquierdo->padre = p;
+		}
+		
 		x->izquierdo = p;
 	}
+	
+	p->padre = x;
+	x->padre = a;
  
 	//poner x donde estaba su padre
 	if (a == NULL) {
 		arbol->raiz = x;
+	
 	} else if (a->izquierdo == p) {
 		a->izquierdo = x;
+	
 	} else {
 		a->derecho = x;
 	}
@@ -45,30 +63,35 @@ void rotar(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
 /* Zig: el padre de x es la raiz. Una sola rotacion.
  * Entrada: el arbol y el nodo
  * Salida: x queda en la raiz */
-void zig(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
+static void zig(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
+	
 	anunciar_paso(arbol, "zig", x);
 	rotar(arbol, x);
+
 }
 
 
 /* Zig-zig: x y su padre: los dos izquierdos o los dos derechos
  * Entrada: el arbol y el nodo
  * Salida: nada (x sube dos niveles) */
-void zig_zig(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
+static void zig_zig(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
+	
 	anunciar_paso(arbol, "zig-zig", x);
 	rotar(arbol, x->padre);
 	rotar(arbol, x);
+
 }
 
 
 /* Zig-zag: x y su padre son hijos de lados distintos.
  * Entrada: el arbol y el nodo
  * Salida: nada (x sube dos niveles) */
-void zig_zag(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
+static void zig_zag(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
 	
 	anunciar_paso(arbol, "zig-zag", x);
 	rotar(arbol, x);
 	rotar(arbol, x);
+
 
 }
 
@@ -76,7 +99,7 @@ void zig_zag(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
 /* Chaflanea: sube x hasta la raiz con las funciones zig, zig-zig y zig-zag
  * Entrada: el arbol y el nodo
  * Salida: nada (x queda en la raiz) */
-void chaflanear(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
+static void chaflanear(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
 	
 	while (x != arbol->raiz) {
 	
@@ -102,7 +125,7 @@ void chaflanear(struct arbol_chaflaneado* arbol, struct nodo_chaflaneado* x) {
 /* Baja por el arbol buscando el texto
  * Entrada: el arbol, el texto y donde guardar el ultimo nodo visitado
  * Salida: el nodo si esta, NULL si no (en ultimo queda el ultimo nodo visitado) */
-struct nodo_chaflaneado* bajar(struct arbol_chaflaneado* arbol, struct string* texto, struct nodo_chaflaneado** ultimo) {
+static struct nodo_chaflaneado* bajar(struct arbol_chaflaneado* arbol, struct string* texto, struct nodo_chaflaneado** ultimo) {
 	
 	struct nodo_chaflaneado* actual = arbol->raiz;
 	
@@ -134,14 +157,14 @@ struct nodo_chaflaneado* bajar(struct arbol_chaflaneado* arbol, struct string* t
 /* Libera un nodo, sus higos y sus sub-arboles
  * Entrada: el nodo
  * Salida: nada (la memoria queda libre) */
-void liberar_nodos(struct nodo_chaflaneado* nodo) {
+static void liberar_nodos_chaflaneado(struct nodo_chaflaneado* nodo) {
 	
 	if (nodo == NULL) {
 		return;
 	}
 	
-	liberar_nodos(nodo->izquierdo);
-	liberar_nodos(nodo->derecho);
+	liberar_nodos_chaflaneado(nodo->izquierdo);
+	liberar_nodos_chaflaneado(nodo->derecho);
 	liberar_string(nodo->texto);
 	
 	if (nodo->libros != NULL) {
@@ -149,6 +172,33 @@ void liberar_nodos(struct nodo_chaflaneado* nodo) {
 	}
 	
 	free(nodo);
+}
+
+
+/* Imprime el arbol acostado
+ * Entradas: nodo raiz del subarbol, nivel en que esta
+ * Salidas: nada (impresion en consola) */
+static void imprimir_nodo_chaflaneado(struct nodo_chaflaneado* nodo, int nivel) {
+ 
+	if (nodo == NULL) {
+		return;
+	}
+ 
+	imprimir_nodo_chaflaneado(nodo->derecho, nivel + 1);
+ 
+	for (int i = 0; i < nivel; i++) {
+		printf("        ");
+	}
+ 
+	if (nivel == 0) {
+		printf("[RAIZ] ");
+	}
+ 
+	printf("\"");
+	imprimirString(nodo->texto);
+	printf("\"\n");
+ 
+	imprimir_nodo_chaflaneado(nodo->izquierdo, nivel + 1);
 }
 
 // ------- FUNCIONES PRINCIPALES ----------------
@@ -187,7 +237,7 @@ struct lista_archivo* buscar_chaflaneado(struct arbol_chaflaneado* arbol, struct
 
 /* Inserta un nodo en el arbol
  * Entradas: arbol, texto, resultados
- * Salidas: entero*/
+ * Salidas: 1 si inserto o ya estaba y 0 si fallo */
 int insertar_chaflaneado(struct arbol_chaflaneado* arbol, struct string* texto, struct lista_archivo* resultados) {
 	
 	if (arbol == NULL || texto == NULL || resultados == NULL) {
@@ -214,6 +264,12 @@ int insertar_chaflaneado(struct arbol_chaflaneado* arbol, struct string* texto, 
  
 	struct nodo_chaflaneado* nuevo = crear_nodo_chaflaneado(texto, resultados);
  
+	if(nuevo == NULL){
+			return 0;
+	}
+	
+	nuevo->padre = ultimo
+	
 	if (ultimo == NULL) { // arbol vacio
 		
 		arbol->raiz = nuevo;
@@ -241,7 +297,7 @@ void liberar_arbol_chaflaneado(struct arbol_chaflaneado* arbol) {
 		return;
 	}
 	
-	liberar_nodos(arbol->raiz);
+	liberar_nodos_chaflaneado(arbol->raiz);
 	
 	free(arbol);
 }
@@ -260,6 +316,42 @@ void imprimir_arbol_chaflaneado(struct arbol_chaflaneado* arbol) {
 	printf("Arbol chaflaneado imprimiendose...");
 	imprimir_nodo(arbol->raiz, 0);
 }
+
+
+/* Imprime la clave de la raiz (para mostrar antes y despues de una busqueda)
+ * Entradas: arbol
+ * Salidas: nada (impresion en consola) */
+void imprimir_raiz_chaflaneado(struct arbol_chaflaneado* arbol) {
+ 
+	if (arbol == NULL || arbol->raiz == NULL) {
+		printf("Arbol vacio\n");
+		return;
+	}
+ 
+	printf("\"");
+	imprimirString(arbol->raiz->texto);
+	printf("\"\n");
+}
+
+
+/* Activa o desactiva la impresion de cada rotacion
+ * Entradas: arbol, 1 para mostrar o 0 para no mostrar
+ * Salidas: nada (el arbol queda configurado) */
+void mostrar_pasos_chaflaneado(struct arbol_chaflaneado* arbol, int mostrar) {
+ 
+	if (arbol != NULL) {
+		arbol->mostrar_pasos = mostrar;
+	}
+}
+
+
+
+
+
+
+
+
+
 
 
 
