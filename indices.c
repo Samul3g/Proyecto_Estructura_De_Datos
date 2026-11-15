@@ -11,8 +11,8 @@
  
  
 // Variables globales/privadas (se utilizan solo en este archivo)
-float numerador;
-float denominador;
+static float numerador;
+static float denominador;
  
  
 /*Funcion que calcula que tan "vacio" esta el
