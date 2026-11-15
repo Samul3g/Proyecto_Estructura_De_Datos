@@ -4,18 +4,17 @@
 #include "estructuras.h"
 #include "indices.h"
 
-
 /*Los índices de necesidad y satisfacción como flotantes, con una fórmula propia. 
  * La necesidad es cuánto falta para el máximo y nunca llega a 1. 
  * La satisfacción mira el nivel de vida de la propia comuna y de las comunas de alrededor.
  * */
  
-
+ 
 // Variables globales/privadas (se utilizan solo en este archivo)
 float numerador;
 float denominador;
-
-
+ 
+ 
 /*Funcion que calcula que tan "vacio" esta el
  * recurso en la comuna
  * Entrada: nodo lista recurso
@@ -41,8 +40,8 @@ float carencia(struct nodo_lista_recursos* nodo){
 	return indice_carencia;
 	
 }
-
-
+ 
+ 
 /*Funcion que va calculando las sumatorias del numerador y denomunador
  * de la formula que calcula el indice.
  * Entradas: lista, numerador y denominador
@@ -70,7 +69,7 @@ float sumatoria_recursos(struct lista_recursos* lista){
 	return 1;
 	
 }
-
+ 
  
 /*Funcion que calcula el indice de necesidad de una comuna.
  *Usa la siguiente formula: necesidad = base + (95 − base) × Σ (necesidad * importancia * carencia) / Σ importancia
@@ -94,34 +93,28 @@ float calcular_necesidad_local(struct comuna* comuna){
 	
 	sumatoria_recursos(comuna->bienes);
 	
-	struct lista_personas* personas = comuna->personas;
-	struct nodo_lista_personas* actual = personas->inicio;
-	struct nodo_lista_personas* ultimo = personas->ultimo;
+	struct nodo_lista_personas* actual = comuna->personas->inicio;
 	
-	
-	while(actual != ultimo){
+	while(actual != NULL){   // funciona tambien si la comuna se quedo sin personas
 		sumatoria_recursos(actual->persona->servicios);
-		actual =  actual->siguiente;
+		actual = actual->siguiente;
 	}
 	
-	sumatoria_recursos(ultimo->persona->servicios);
-	
-	
-	
 	if(denominador == 0){
-			return 0;
+		comuna->necesidad_local = 0;   // que no quede el valor del turno anterior
+		return 0;
 	}
 		
 		
 	float promedio = numerador / denominador;   // entre 0 y 1
 	resultado = base + (95.0 - base) * promedio;
-
-
+ 
+ 
     comuna->necesidad_local = resultado;
 	return resultado;
     
 }
-
+ 
 /* Funcion que calcula el indice de necesidad de una comuna basado en demas indices
  * propios y de las dos comuna siguientes y anteriores
  * Entradas: nodo_lista_comunas
@@ -132,9 +125,11 @@ float calcular_necesidad(struct nodo_lista_comunas* nodo){
 		return 0;
 	}
 	
+	struct comuna* comuna = nodo->comuna;
+	
 	struct nodo_lista_comunas* comunas_tomar_cuenta[5] = {
 		nodo,
-
+ 
 		nodo->anterior,
 		nodo->anterior->anterior,
 		
@@ -156,7 +151,7 @@ float calcular_necesidad(struct nodo_lista_comunas* nodo){
 				break;
 			}
 		}
-
+ 
 		if(!repetida){
 			struct comuna* vecina = comunas_tomar_cuenta[i]->comuna;
 			suma_necesidad_vecinas += vecina->necesidad_local;
@@ -166,8 +161,13 @@ float calcular_necesidad(struct nodo_lista_comunas* nodo){
 	}
 	
 		
-	float promedio_necesidad_vecinas = suma_necesidad_vecinas / contadas;
-	float promedio_insatisfaccion_vecinas = suma_insatisfaccion_vecinas / contadas;
+	float promedio_necesidad_vecinas = 0;
+	float promedio_insatisfaccion_vecinas = 0;
+	
+	if(contadas > 0){   // B4: sin vecinas, el promedio vale 0
+		promedio_necesidad_vecinas = suma_necesidad_vecinas / contadas;
+		promedio_insatisfaccion_vecinas = suma_insatisfaccion_vecinas / contadas;
+	}
 	
 	float diferencia = comuna->reciprocidad - 0.5;
 	
@@ -180,15 +180,15 @@ float calcular_necesidad(struct nodo_lista_comunas* nodo){
 	int dados = comuna->regalos_dados;
 	int recibidos = comuna->regalos_recibidos;
 	float proporcion_recibidos = (float) recibidos / (dados + recibidos + 1);
-
+ 
 	float resultado =
 		  0.40 * comuna->necesidad_local
 		+ 0.20 * promedio_necesidad_vecinas
 		+ 0.15 * promedio_insatisfaccion_vecinas
 		+ 0.15 * desbalance * 100.0
 		+ 0.10 * (1.0 - proporcion_recibidos) * 100.0;
-
-
+ 
+ 
 	if(resultado < 0.0){
 		resultado = 0.0;
 	
@@ -202,8 +202,8 @@ float calcular_necesidad(struct nodo_lista_comunas* nodo){
 	return resultado;
     
 }
-
-
+ 
+ 
 /*Funcion que calcula la satisfaccion de una comuna
  *Entradas: struct nodo de la lista de comunas
  *Salidas: indice de satisfaccion (100 - promedio de necesidad_local)
@@ -213,11 +213,11 @@ float calcular_satisfaccion(struct nodo_lista_comunas* nodo_lista_comunas){
 	if(nodo_lista_comunas == NULL){
 		return 0;
 	}
-
-
+ 
+ 
 	struct nodo_lista_comunas* comunas_tomar_cuenta[5] = {
 		nodo_lista_comunas,
-
+ 
 		nodo_lista_comunas->anterior,
 		nodo_lista_comunas->anterior->anterior,
 		
@@ -251,7 +251,7 @@ float calcular_satisfaccion(struct nodo_lista_comunas* nodo_lista_comunas){
 	
 	float promedio = suma / contadas;
 	float resultado = 100.0 - promedio;
-
+ 
 	nodo_lista_comunas->comuna->satisfaccion = resultado;
 	return resultado;
 	}
@@ -278,17 +278,17 @@ float calcular_indice_reciprocidad(struct comuna* comuna){
 		comuna->reciprocidad = balance;
 		return balance;
 		
-
+ 
 }
-
-
+ 
+ 
 /*  Funcion que calcula el indice de la sociedad
 	Entrada: sociedad
 	Salida: 1 (true/exito), 0 si la lista es NULL
 */
 int calcular_indice_sociedad(struct lista_comunas* sociedad){
 	
-	if(sociedad == NULL){
+	if(sociedad == NULL || sociedad->inicio == NULL){
 			return 0;
 	}
 	

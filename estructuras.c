@@ -653,7 +653,7 @@ struct nodo_arbol_avl* crear_nodo_avl(struct string* nombre, const char* ruta){
 			return NULL;
 	}	
 	
-	nodo->ruta = calloc(1, strlen(ruta));
+	nodo->ruta = calloc(1, strlen(ruta) + 1);
 	
 	if(nodo->ruta == NULL){
 			free(nodo);
@@ -681,7 +681,7 @@ struct arbol_chaflaneado* crear_arbol_chaflaneado(){
 /* Crea un nodo del arbol chaflaneado
  * Entradas: texto (clave), lista de libros
  * Salidas: el nodo */
-struct nodo_chaflaneado* crear_nodo_chaflaneado(struct string* texto, struct lista_archivo libros){
+struct nodo_chaflaneado* crear_nodo_chaflaneado(struct string* texto, struct lista_archivo* libros){
 	
 	struct nodo_chaflaneado* nodo = calloc(1, sizeof(struct nodo_chaflaneado));
 	

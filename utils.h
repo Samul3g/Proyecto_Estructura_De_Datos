@@ -49,6 +49,17 @@ struct nodo_recurso* crear_recurso_desde_linea(struct string* linea, int cantida
 /* Compara dos strings
 	Entrada: los dos strings
 	Salida: -1 si a < b, 0 si son iguales, 1 si a > b */
-int comparar_strings(struct string* a, struct string* b)
+int comparar_strings(struct string* a, struct string* b);
+
+/* Copia un string caracter por caracter
+ * Entrada: el string
+ * Salida: un string nuevo con los mismos caracteres */
+struct string* copiar_string(struct string* s);
+
+
+/* Revisa que un archivo sea .txt
+ * Entradas: nombre del archivo
+ * Salidas: 1 si termina en .txt, 0 si no */
+int es_txt(const char* nombre);
 
 #endif

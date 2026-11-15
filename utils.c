@@ -221,3 +221,71 @@ int comparar_strings(struct string* a, struct string* b) {
 
 }
 
+
+/* Copia un string caracter por caracter
+ * Entrada: el string
+ * Salida: un string nuevo con los mismos caracteres */
+struct string* copiar_string(struct string* s) {
+
+	struct string* copia = crear_string("");
+	struct char_array* ultimo = NULL;
+	struct char_array* actual = s->inicio;
+
+	while (actual != NULL) {
+
+		struct char_array* nuevo = crear_char_array(actual->caracter);
+
+		if (ultimo == NULL) {
+			copia->inicio = nuevo;
+		
+		} else {
+			ultimo->siguiente = nuevo;
+		
+		}
+
+		ultimo = nuevo;
+		actual = actual->siguiente;
+	}
+
+	return copia;
+}
+
+
+/* Revisa que un archivo sea .txt
+ * Entradas: nombre del archivo
+ * Salidas: 1 si termina en .txt, 0 si no */
+int es_txt(const char* nombre){
+	
+	size_t largo = strlen(nombre);
+	
+	if (largo <= 4){
+		return 0;
+	}
+	
+	if(strcmp(nombre + largo - 4, ".txt") == 0){
+		return 1;
+	}
+	
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

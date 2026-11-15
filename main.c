@@ -107,9 +107,9 @@ void configuracion_inicial(){
 int main(){
 	configuracion_inicial();
 	
-	struct biblioteca* biblioteca = crear_biblioteca();
+	struct biblioteca* biblioteca = crear_biblioteca(/*poner aqui ruta del corpus */);
 	if(biblioteca == NULL){
-		print("\033[31m  No se pudo abrir el corpus %s\033[0m\n", RUTA_CORPUS);
+		printf("\033[31m  No se pudo abrir el corpus %s\033[0m\n", /*poner aqui ruta del corpus */);
 		return 1;
 	}
 	
@@ -130,5 +130,6 @@ int main(){
 	}
 	
 	despedida();
+	return 0;
 }
 	
